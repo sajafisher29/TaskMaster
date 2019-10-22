@@ -1,14 +1,11 @@
 package com.example.taskmaster;
 
+import android.content.Intent;
 import android.os.Bundle;
-
-import com.google.android.material.bottomnavigation.BottomNavigationView;
+import android.view.View;
+import android.widget.Button;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.navigation.NavController;
-import androidx.navigation.Navigation;
-import androidx.navigation.ui.AppBarConfiguration;
-import androidx.navigation.ui.NavigationUI;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -16,15 +13,28 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        BottomNavigationView navView = findViewById(R.id.nav_view);
-        // Passing each menu ID as a set of Ids because each
-        // menu should be considered as top level destinations.
-        AppBarConfiguration appBarConfiguration = new AppBarConfiguration.Builder(
-                R.id.navigation_home, R.id.navigation_dashboard, R.id.navigation_notifications)
-                .build();
-        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
-        NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
-        NavigationUI.setupWithNavController(navView, navController);
+
+        // Add a task button
+        Button addTaskButton = findViewById(R.id.addTaskButton);
+        // Add an event listener
+        addTaskButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View event) {
+                Intent goToAddATaskActivityIntent = new Intent(MainActivity.this, AddATask.class);
+                MainActivity.this.startActivity(goToAddATaskActivityIntent);
+            }
+        });
+        // All tasks button
+        Button allTasksButton = findViewById(R.id.allTasksButton);
+        // Add an event listener
+        allTasksButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View event) {
+                Intent goToAllTasksActivityIntent = new Intent(MainActivity.this, AllTasks.class);
+                MainActivity.this.startActivity(goToAllTasksActivityIntent);
+            }
+        });
+
     }
 
 }
