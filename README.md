@@ -13,13 +13,12 @@ We are building a TaskMaster App
 * [Build the "All Tasks" page](https://codefellows.github.io/code-401-java-guide/curriculum/class-26/taskmaster_all_tasks.png)
 * Include an image with a back button - no functionality needed at this point
 * Create directory called screenshots
-* *Include screenshot of homepage here* ![image description](screenshots/path_to_screenshot_file.png)
 * Build unit tests for any testable code at this point
 #### Screenshots
-![Home page](screenshots/MondayHomePage.png)
-![Add Task page](screenshots/MondayAddTaskPage.png)
-![Add Task page with Toast](screenshots/MondayAddTaskPageWithToast.png)
-![All Tasks page](screenshots/MondayAllTasksPage.png)
+![Home page](app/screenshots/MondayHomePage.png)
+![Add Task page](app/screenshots/MondayAddTaskPage.png)
+![Add Task page with Toast](app/screenshots/MondayAddTaskPageWithToast.png)
+![All Tasks page](app/screenshots/MondayAllTasksPage.png)
 
 ### Tuesday
 #### Screenshots
