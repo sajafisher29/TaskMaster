@@ -16,9 +16,9 @@ We are building a TaskMaster App
 * Build unit tests for any testable code at this point
 #### Screenshots
 ![Home page](screenshots/MondayHomePage.PNG)  
-![Add Task page](https://github.com/sajafisher29/taskmaster/blob/master/screenshots/MondayAddTaskPage.PNG)  
-![Add Task page with Toast](https://github.com/sajafisher29/taskmaster/blob/master/screenshots/MondayAddTaskPageWithToast.png)  
-![All Tasks page](https://github.com/sajafisher29/taskmaster/blob/master/screenshots/MondayAllTasksPage.png)  
+![Add Task page](screenshots/MondayAddTaskPage.PNG)  
+![Add Task page with Toast](screenshots/MondayAddTaskPageWithToast.PNG)  
+![All Tasks page](screenshots/MondayAllTasksPage.PNG)  
 
 ### Tuesday
 #### Screenshots
