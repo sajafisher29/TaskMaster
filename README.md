@@ -15,10 +15,10 @@ We are building a TaskMaster App
 * Create directory called screenshots
 * Build unit tests for any testable code at this point
 #### Screenshots
-![Home page](screenshots/MondayHomePage.png)
-![Add Task page](screenshots/MondayAddTaskPage.png)
-![Add Task page with Toast](screenshots/MondayAddTaskPageWithToast.png)
-![All Tasks page](screenshots/MondayAllTasksPage.png)
+![Home page](screenshots/MondayHomePage.png)  
+![Add Task page](screenshots/MondayAddTaskPage.png)  
+![Add Task page with Toast](screenshots/MondayAddTaskPageWithToast.png)  
+![All Tasks page](screenshots/MondayAllTasksPage.png)  
 
 ### Tuesday
 #### Screenshots
