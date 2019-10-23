@@ -4,4 +4,18 @@
     <string name="title_dashboard">Dashboard</string>
     <string name="title_notifications">Notifications</string>
     <string name="submit_confirmation">Submitted!</string>
+    <string name="veggie_ipsum">Veggies es bonus vobis, proinde vos postulo essum magis kohlrabi welsh onion daikon amaranth tatsoi tomatillo melon azuki bean garlic.\nGumbo beet greens corn soko endive gumbo gourd. Parsley shallot courgette tatsoi pea sprouts fava bean collard greens dandelion okra wakame tomato. Dandelion cucumber earthnut pea peanut soko zucchini.\nTurnip greens yarrow ricebean rutabaga endive cauliflower sea lettuce kohlrabi amaranth water spinach avocado daikon napa cabbage asparagus winter purslane kale. Celery potato scallion desert raisin horseradish spinach carrot soko. Lotus root water spinach fennel kombu maize bamboo shoot green bean swiss chard seakale pumpkin onion chickpea gram corn pea. Brussels sprout coriander water chestnut gourd swiss chard wakame kohlrabi beetroot carrot watercress. Corn amaranth salsify bunya nuts nori azuki bean chickweed potato bell pepper artichoke.\nNori grape silver beet broccoli kombu beet greens fava bean potato quandong celery. Bunya nuts black-eyed pea prairie turnip leek lentil turnip greens parsnip. Sea lettuce lettuce water chestnut eggplant winter purslane fennel azuki bean earthnut pea sierra leone bologi leek soko chicory celtuce parsley jícama salsify.</string>
+    <string name="Clear_the_blackberry">Clear the blackberry</string>
+    <string name="My_tasks">My Tasks</string>
+    <string name="Add_task">Add Task</string>
+    <string name="All_tasks">All Tasks</string>
+    <string name="Clear_ivy">Clear the English ivy</string>
+    <string name="Clear_planting">Clear planting space</string>
+    <string name="Settings">Settings</string>
+    <string name="username_hint">username</string>
+    <string name="save_username_button">Save Username</string>
+    <string name="Hello">Hello</string>
+    <string name="task_view_preference">Number of tasks</string>
+    <string name="task_view_preference_prompt">How many tasks would you like to see on the homepage?</string>
+    <string name="save_tasks_view_preference">Save Tasks Preference</string>
 </resources>

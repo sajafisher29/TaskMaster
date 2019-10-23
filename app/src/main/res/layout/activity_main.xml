@@ -23,44 +23,98 @@
         android:id="@+id/homePageHeader"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="My Tasks"
+        android:text="@string/My_tasks"
         android:textAppearance="@style/TextAppearance.AppCompat.Display1"
         android:textSize="30sp"
+        app:layout_constraintBottom_toTopOf="@+id/taskTitle1Button"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <ImageView
-        android:id="@+id/placeHolderImage"
-        android:layout_width="292dp"
-        android:layout_height="285dp"
-        app:layout_constraintBottom_toTopOf="@+id/nav_view"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/homePageHeader"
-        app:srcCompat="@drawable/leaftaskmasterapp"
-        tools:srcCompat="@drawable/leaftaskmasterapp" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.52" />
 
     <Button
         android:id="@+id/addTaskButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
         android:layout_marginEnd="50dp"
         android:layout_marginRight="50dp"
-        android:text="Add Task"
-        app:layout_constraintBottom_toTopOf="@+id/nav_view"
+        android:layout_marginBottom="32dp"
+        android:text="@string/Add_task"
+        app:layout_constraintBottom_toTopOf="@+id/settingsPageButton"
         app:layout_constraintEnd_toStartOf="@+id/allTasksButton"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/placeHolderImage" />
+        app:layout_constraintTop_toBottomOf="@+id/taskTitle3Button" />
 
     <Button
         android:id="@+id/allTasksButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="All Tasks"
-        app:layout_constraintBottom_toTopOf="@+id/nav_view"
+        android:layout_marginStart="50dp"
+        android:layout_marginLeft="50dp"
+        android:layout_marginTop="32dp"
+        android:layout_marginBottom="32dp"
+        android:text="@string/All_tasks"
+        app:layout_constraintBottom_toTopOf="@+id/settingsPageButton"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/addTaskButton"
-        app:layout_constraintTop_toBottomOf="@+id/placeHolderImage" />
+        app:layout_constraintTop_toBottomOf="@+id/taskTitle3Button" />
+
+    <Button
+        android:id="@+id/taskTitle1Button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:onClick="redirectToTaskDetailActivity"
+        android:text="@string/Clear_the_blackberry"
+        app:layout_constraintBottom_toTopOf="@+id/taskTitle2Button"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/homePageHeader" />
+
+    <Button
+        android:id="@+id/taskTitle2Button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:onClick="redirectToTaskDetailActivity"
+        android:text="@string/Clear_ivy"
+        app:layout_constraintBottom_toTopOf="@+id/taskTitle3Button"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/taskTitle1Button" />
+
+    <Button
+        android:id="@+id/taskTitle3Button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="50dp"
+        android:onClick="redirectToTaskDetailActivity"
+        android:text="@string/Clear_planting"
+        app:layout_constraintBottom_toTopOf="@+id/settingsPageButton"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/taskTitle2Button" />
+
+    <Button
+        android:id="@+id/settingsPageButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="50dp"
+        android:text="@string/Settings"
+        app:layout_constraintBottom_toTopOf="@+id/nav_view"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/taskTitle3Button" />
+
+    <TextView
+        android:id="@+id/greetingTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/Hello"
+        app:layout_constraintBottom_toTopOf="@+id/homePageHeader"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.85"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
