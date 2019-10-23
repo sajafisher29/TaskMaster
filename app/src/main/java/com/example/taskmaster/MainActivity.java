@@ -1,12 +1,26 @@
 package com.example.taskmaster;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
+
 import androidx.appcompat.app.AppCompatActivity;
 
 public class MainActivity extends AppCompatActivity {
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        // Grab username from SharedPreferences and use it to update the user's name displayed
+        SharedPreferences usernameSharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        String username = usernameSharedPreferences.getString("username", "user");
+        TextView nameTextView = findViewById(R.id.greetingTextView);
+        nameTextView.setText("Hello " + username + "!");
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,6 +46,17 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View event) {
                 Intent goToAllTasksActivityIntent = new Intent(MainActivity.this, AllTasks.class);
                 MainActivity.this.startActivity(goToAllTasksActivityIntent);
+            }
+        });
+
+        // Grab the settings button
+        Button settingsButton = findViewById(R.id.settingsPageButton);
+        // Add an event listener
+        settingsButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View event) {
+                Intent goToSettingsActivityIntent = new Intent(MainActivity.this, Settings.class);
+                MainActivity.this.startActivity(goToSettingsActivityIntent);
             }
         });
 
