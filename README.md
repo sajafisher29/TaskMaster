@@ -1,9 +1,9 @@
 # TaskMaster Android App
 
 ## Description
+We are building a TaskMaster App 
 
 ## Change Log
-
 ### Monday
 * Build main page to match [wireframe](https://codefellows.github.io/code-401-java-guide/curriculum/class-26/taskmaster_homepage.png)
 * Include heading at top of page, an image placeholder for the "my tasks" view, and buttons at the bottom to route to "add tasks" and "all tasks" pages
@@ -15,14 +15,23 @@
 * Create directory called screenshots
 * *Include screenshot of homepage here* ![image description](screenshots/path_to_screenshot_file.png)
 * Build unit tests for any testable code at this point
+#### Screenshots
+![Home page](screenshots/MondayHomePage.png)
+![Add Task page](screenshots/MondayAddTaskPage.png)
+![Add Task page with Toast](screenshots/MondayAddTaskPageWithToast.png)
+![All Tasks page](screenshots/MondayAllTasksPage.png)
 
 ### Tuesday
+#### Screenshots
 
 ### Wednesday
+#### Screenshots
 
 ### Thursday
+#### Screenshots
 
 ### Friday
+#### Screenshots
 
 ## Resources 
 * [Android Buttons](https://developer.android.com/guide/topics/ui/controls/button.html)
