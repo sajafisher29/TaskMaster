@@ -15,7 +15,7 @@ We are building a TaskMaster App
 * Create directory called screenshots
 * Build unit tests for any testable code at this point
 #### Screenshots
-![Home page](https://github.com/sajafisher29/taskmaster/blob/master/screenshots/MondayHomePage.png)  
+![Home page](screenshots/MondayHomePage.PNG)  
 ![Add Task page](https://github.com/sajafisher29/taskmaster/blob/master/screenshots/MondayAddTaskPage.PNG)  
 ![Add Task page with Toast](https://github.com/sajafisher29/taskmaster/blob/master/screenshots/MondayAddTaskPageWithToast.png)  
 ![All Tasks page](https://github.com/sajafisher29/taskmaster/blob/master/screenshots/MondayAllTasksPage.png)  
