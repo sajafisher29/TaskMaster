@@ -14,7 +14,7 @@ We are building a TaskMaster App!
 * Include an image with a back button - no functionality needed at this point
 * Create directory called screenshots
 * Build unit tests for any testable code at this point
-* Stretch goals: Consider the styling for this app. Decide on a color scheme and font families to use.
+* Stretch goal: Consider the styling for this app. Decide on a color scheme and font families to use.
 #### Screenshots
 ![Home page](screenshots/MondayHomePage.PNG)  
 ![Add Task page](screenshots/MondayAddTaskPage.PNG)  
@@ -28,10 +28,19 @@ We are building a TaskMaster App!
 * The homepage should also contain a button to visit the Settings page, and once the user has entered their username, it should display “{username}’s tasks” above the three task buttons.
 * Update homepage screenshot and add a screenshot of Task Detail page.
 * Build unit tests for any testable code at this point
-* Allow the user to specify on their settings page how many tasks should be shown on the homepage. Use this to dynamically create buttons for as many tasks as the user requests.
+* Stretch goal: Allow the user to specify on their settings page how many tasks should be shown on the homepage. Use this to dynamically create buttons for as many tasks as the user requests.
 #### Screenshots
 
 ### Wednesday
+* Refactor homepage with a RecyclerView holding Task data
+* Create a task class. A task should include a title, body, and a state. The state should be one of "new", "assigned", "in progress", or "complete".
+* Create a ViewAdapter class that displays data from a list of Tasks.
+* In MainActiviy, create at least three hardcoded Task instances and use those to populate RecyclerView/ViewAdapter
+* Ensure that clicking any task in the RecyclerView appropriately launches the detail page with the correct title.
+* Update homepage screenshot
+* Create Espresso tests
+* Stretch goal: Allow the user to specify on their settings page how many tasks should be shown on the homepage. Use this to dynamically create as many tasks as the user requests for display in the RecyclerView.
+* Stretch goal: Display the description of the correct task instead of the Lorem Ipsum text on the task detail page.
 #### Screenshots
 
 ### Thursday
@@ -46,4 +55,5 @@ We are building a TaskMaster App!
 * [Android Studio user guide](https://developer.android.com/studio/intro)
 * [Android SharedPreferences](https://developer.android.com/training/data-storage/shared-preferences)
 * [The Activity Lifecycle](https://developer.android.com/guide/components/activities/activity-lifecycle)
-* [Android Studio user guide](https://developer.android.com/studio/intro)
+* [RecyclerView](https://developer.android.com/guide/topics/ui/layout/recyclerview#java)
+* []
