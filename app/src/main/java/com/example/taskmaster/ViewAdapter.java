@@ -10,7 +10,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.List;
 
-class ViewAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder> {
+class ViewAdapter extends RecyclerView.Adapter<ViewAdapter.TaskViewHolder> {
 
     public List<Task> tasks;
     private OnTaskInteractionListener listener;
@@ -30,7 +30,6 @@ class ViewAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder> {
             super(taskView);
             this.taskTitleView = taskView.findViewById(R.id.title);
             this.taskBodyView = taskView.findViewById(R.id.body);
-            this.taskStateView = taskView.findViewById(R.id.state);
         }
     }
 
@@ -57,10 +56,13 @@ class ViewAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder> {
         holder.task = taskAtPosition;
         holder.taskTitleView.setText(taskAtPosition.getTitle());
         holder.taskBodyView.setText(taskAtPosition.getBody());
-        holder.taskStateView.setText(taskAtPosition.getState());
     }
 
     @Override
+    public int getItemCount() {
+        return 0;
+    }
+
     public int getTaskCount() {
         return this.tasks.size();
     }

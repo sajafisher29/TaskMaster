@@ -15,7 +15,7 @@
         android:text="@string/My_tasks"
         android:textAppearance="@style/TextAppearance.AppCompat.Display1"
         android:textSize="30sp"
-        app:layout_constraintBottom_toTopOf="@+id/recyclerView"
+        app:layout_constraintBottom_toTopOf="@+id/mainRecyclerView"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -31,7 +31,7 @@
         app:layout_constraintBottom_toTopOf="@+id/settingsPageButton"
         app:layout_constraintEnd_toStartOf="@+id/allTasksButton"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/recyclerView" />
+        app:layout_constraintTop_toBottomOf="@+id/mainRecyclerView" />
 
     <Button
         android:id="@+id/allTasksButton"
@@ -44,7 +44,7 @@
         app:layout_constraintBottom_toTopOf="@+id/settingsPageButton"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/addTaskButton"
-        app:layout_constraintTop_toBottomOf="@+id/recyclerView" />
+        app:layout_constraintTop_toBottomOf="@+id/mainRecyclerView" />
 
     <Button
         android:id="@+id/settingsPageButton"
@@ -69,7 +69,7 @@
         app:layout_constraintVertical_bias="0.0" />
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recyclerView"
+        android:id="@+id/mainRecyclerView"
         android:layout_width="357dp"
         android:layout_height="402dp"
         app:layout_constraintBottom_toTopOf="@+id/addTaskButton"
