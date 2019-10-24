@@ -7,10 +7,17 @@ import android.preference.PreferenceManager;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
-
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import java.util.LinkedList;
+import java.util.List;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements ViewAdapter.OnTaskInteractionListener{
+
+    private String enteredTaskName = null;
+
+    private List<Task> tasks;
 
     @Override
     protected void onResume() {
@@ -19,13 +26,50 @@ public class MainActivity extends AppCompatActivity {
         SharedPreferences usernameSharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         String username = usernameSharedPreferences.getString("username", "user");
         TextView nameTextView = findViewById(R.id.greetingTextView);
-        nameTextView.setText("Hello " + username + "!");
+        nameTextView.setText("Hello " + username + "!"); // Strings are coded to replace this. Needs to be refactored.
     }
 
+    // This gets called automatically when MainActivity is created/shown for the first time
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        this.tasks = new LinkedList<>();
+        tasks.add(new Task("Clear the blackberry", "Veggies es bonus vobis, proinde vos postulo essum magis kohlrabi welsh onion daikon amaranth tatsoi tomatillo melon azuki bean garlic.\\nGumbo beet greens corn soko endive gumbo gourd. Parsley shallot courgette tatsoi pea sprouts fava bean collard greens dandelion okra wakame tomato. Dandelion cucumber earthnut pea peanut soko zucchini.\\nTurnip greens yarrow ricebean rutabaga endive cauliflower sea lettuce kohlrabi amaranth water spinach avocado daikon napa cabbage asparagus winter purslane kale. Celery potato scallion desert raisin horseradish spinach carrot soko. Lotus root water spinach fennel kombu maize bamboo shoot green bean swiss chard seakale pumpkin onion chickpea gram corn pea. Brussels sprout coriander water chestnut gourd swiss chard wakame kohlrabi beetroot carrot watercress. Corn amaranth salsify bunya nuts nori azuki bean chickweed potato bell pepper artichoke.\\nNori grape silver beet broccoli kombu beet greens fava bean potato quandong celery. Bunya nuts black-eyed pea prairie turnip leek lentil turnip greens parsnip. Sea lettuce lettuce water chestnut eggplant winter purslane fennel azuki bean earthnut pea sierra leone bologi leek soko chicory celtuce parsley jícama salsify."));
+        tasks.add(new Task("Clear the English ivy", "Veggies es bonus vobis, proinde vos postulo essum magis kohlrabi welsh onion daikon amaranth tatsoi tomatillo melon azuki bean garlic.\\nGumbo beet greens corn soko endive gumbo gourd. Parsley shallot courgette tatsoi pea sprouts fava bean collard greens dandelion okra wakame tomato. Dandelion cucumber earthnut pea peanut soko zucchini.\\nTurnip greens yarrow ricebean rutabaga endive cauliflower sea lettuce kohlrabi amaranth water spinach avocado daikon napa cabbage asparagus winter purslane kale. Celery potato scallion desert raisin horseradish spinach carrot soko. Lotus root water spinach fennel kombu maize bamboo shoot green bean swiss chard seakale pumpkin onion chickpea gram corn pea. Brussels sprout coriander water chestnut gourd swiss chard wakame kohlrabi beetroot carrot watercress. Corn amaranth salsify bunya nuts nori azuki bean chickweed potato bell pepper artichoke.\\nNori grape silver beet broccoli kombu beet greens fava bean potato quandong celery. Bunya nuts black-eyed pea prairie turnip leek lentil turnip greens parsnip. Sea lettuce lettuce water chestnut eggplant winter purslane fennel azuki bean earthnut pea sierra leone bologi leek soko chicory celtuce parsley jícama salsify."));
+        tasks.add(new Task("Clear planting space", "Veggies es bonus vobis, proinde vos postulo essum magis kohlrabi welsh onion daikon amaranth tatsoi tomatillo melon azuki bean garlic.\\nGumbo beet greens corn soko endive gumbo gourd. Parsley shallot courgette tatsoi pea sprouts fava bean collard greens dandelion okra wakame tomato. Dandelion cucumber earthnut pea peanut soko zucchini.\\nTurnip greens yarrow ricebean rutabaga endive cauliflower sea lettuce kohlrabi amaranth water spinach avocado daikon napa cabbage asparagus winter purslane kale. Celery potato scallion desert raisin horseradish spinach carrot soko. Lotus root water spinach fennel kombu maize bamboo shoot green bean swiss chard seakale pumpkin onion chickpea gram corn pea. Brussels sprout coriander water chestnut gourd swiss chard wakame kohlrabi beetroot carrot watercress. Corn amaranth salsify bunya nuts nori azuki bean chickweed potato bell pepper artichoke.\\nNori grape silver beet broccoli kombu beet greens fava bean potato quandong celery. Bunya nuts black-eyed pea prairie turnip leek lentil turnip greens parsnip. Sea lettuce lettuce water chestnut eggplant winter purslane fennel azuki bean earthnut pea sierra leone bologi leek soko chicory celtuce parsley jícama salsify."));
+
+        // Render the tasks in the RecyclerView https://developer.android.com/guide/topics/ui/layout/recyclerview
+        RecyclerView recyclerView = findViewById(R.id.mainRecyclerView);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        recyclerView.setAdapter(new ViewAdapter(this.tasks, this));
+
+//        // When the button is clicked, show the thing whose id is results
+//
+//        // Grab the button, using its Id and the generated R (resource) info
+//        Button button = findViewById(R.id.button);
+//        // Add the event listener to the button
+//        button.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View event) {
+//                // Hide the keyboard
+//                InputMethodManager inputManager = (InputMethodManager)
+//                        getSystemService(Context.INPUT_METHOD_SERVICE);
+//                inputManager.hideSoftInputFromWindow((null == getCurrentFocus()) ? null : getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+//                // Update text of the thing to be whatever was typed in
+//
+//                // Grab what was typed in
+//                EditText editText = findViewById(R.id.editText);
+//                enteredTaskName = editText.getText().toString();
+//                // Set the text of the thing to be the tasks
+////                TextView tasksTextView = findViewById(R.id.taskTitle);
+////                tasksTextView.setText(MainActivity.this.tasks.toString());
+//
+//                // Show the results
+//                MainActivity.this.findViewById(R.id.results).setVisibility(View.VISIBLE);
+//            }
+//        });
 
         // Grab the add a task button
         Button addTaskButton = findViewById(R.id.addTaskButton);
@@ -60,44 +104,14 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        // For hardcoded task buttons
-        final Button task1Button = findViewById(R.id.taskTitle1Button);
-        // Add an event listener
-        task1Button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View event) {
-                Intent redirectToTaskDetailIntent = new Intent(MainActivity.this, TaskDetails.class);
-                String task1Title = task1Button.getText().toString();
-                redirectToTaskDetailIntent.putExtra("taskTitle", task1Title);
-                MainActivity.this.startActivity(redirectToTaskDetailIntent);
-            }
-        });
+    }
 
-        // For hardcoded task buttons
-        final Button task2Button = findViewById(R.id.taskTitle2Button);
-        // Add an event listener
-        task2Button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View event) {
-                Intent redirectToTaskDetailIntent = new Intent(MainActivity.this, TaskDetails.class);
-                String task2Title = task2Button.getText().toString();
-                redirectToTaskDetailIntent.putExtra("taskTitle", task2Title);
-                MainActivity.this.startActivity(redirectToTaskDetailIntent);
-            }
-        });
+    public void taskSelected(Task task) {
+        Intent goToTaskDetailsPageActivityIntent = new Intent(this, TaskDetails.class);
 
-        // For hardcoded task buttons
-        final Button task3Button = findViewById(R.id.taskTitle3Button);
-        // Add an event listener
-        task3Button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View event) {
-                Intent redirectToTaskDetailIntent = new Intent(MainActivity.this, TaskDetails.class);
-                String task3Title = task3Button.getText().toString();
-                redirectToTaskDetailIntent.putExtra("taskTitle", task3Title);
-                MainActivity.this.startActivity(redirectToTaskDetailIntent);
-            }
-        });
+        // Add info about what task is being checked
+        goToTaskDetailsPageActivityIntent.putExtra("task", task.getTitle());
+        MainActivity.this.startActivity(goToTaskDetailsPageActivityIntent);
     }
 
 //    public static final String taskTitle = "taskTitle";
