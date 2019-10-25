@@ -12,7 +12,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.room.Room;
-
 import java.util.LinkedList;
 import java.util.List;
 
@@ -20,8 +19,8 @@ public class MainActivity extends AppCompatActivity implements TaskAdapter.OnTas
 
     private static final String TAG = "MainActivity";
 
-    private String enteredTaskName = null;
-    private String enteredTaskPreference = null;
+    public String enteredTaskName = null;
+    public String enteredTaskPreference = null;
 
     private List<Task> tasks;
 
@@ -41,12 +40,12 @@ public class MainActivity extends AppCompatActivity implements TaskAdapter.OnTas
 
     // This gets called automatically when MainActivity is created/shown for the first time
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
         // Database
-        database = Room.databaseBuilder(getApplicationContext(), TaskMasterDatabase.class, "task_master")
+        database = Room.databaseBuilder(getApplicationContext(), TaskMasterDatabase.class, "task")
                     .allowMainThreadQueries().build();
 
         this.tasks = new LinkedList<>();
