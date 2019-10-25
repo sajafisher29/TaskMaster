@@ -4,18 +4,16 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
-
 import java.util.List;
 
-class ViewAdapter extends RecyclerView.Adapter<ViewAdapter.TaskViewHolder> {
+class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder> {
 
     public List<Task> tasks;
     private OnTaskInteractionListener listener;
 
-    public ViewAdapter(List<Task> tasks, OnTaskInteractionListener listener) {
+    public TaskAdapter(List<Task> tasks, OnTaskInteractionListener listener) {
         this.tasks = tasks;
         this.listener = listener;
     }
@@ -60,10 +58,6 @@ class ViewAdapter extends RecyclerView.Adapter<ViewAdapter.TaskViewHolder> {
 
     @Override
     public int getItemCount() {
-        return 0;
-    }
-
-    public int getTaskCount() {
         return this.tasks.size();
     }
 
