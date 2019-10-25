@@ -2,11 +2,13 @@ package com.example.taskmaster;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 
@@ -30,5 +32,10 @@ public class Settings extends AppCompatActivity {
         editor.apply();
         Intent goToHomepage = new Intent(Settings.this, MainActivity.class);
         Settings.this.startActivity(goToHomepage);
+
+        // hide keyboard
+        InputMethodManager inputManager = (InputMethodManager)
+                getSystemService(Context.INPUT_METHOD_SERVICE);
+        inputManager.hideSoftInputFromWindow((null == getCurrentFocus()) ? null : getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
     }
 }

@@ -1,8 +1,6 @@
 package com.example.taskmaster;
 
 import androidx.appcompat.app.AppCompatActivity;
-
-import android.content.Intent;
 import android.os.Bundle;
 import android.widget.TextView;
 
@@ -13,10 +11,13 @@ public class TaskDetails extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_task_details);
 
-        Intent intent = getIntent();
-        String title = intent.getExtras().getString("taskTitle");
-        TextView titleTextView = findViewById(R.id.taskDetailsHeading);
-        titleTextView.setText(title);
+        String taskName = getIntent().getStringExtra("taskTitle");
+        TextView tasktitle = findViewById(R.id.taskDetailsHeading);
+        tasktitle.setText(taskName);
+
+        String taskDescription = getIntent().getStringExtra("taskBody");
+        TextView taskDesc =  findViewById(R.id.taskDetailsDescription);
+        taskDesc.setText(taskDescription);
     }
 
 }

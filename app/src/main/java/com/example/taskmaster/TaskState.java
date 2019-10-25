@@ -1,5 +1,5 @@
 package com.example.taskmaster;
 
-enum TaskState {
+public enum TaskState {
     NEW, ASSIGNED, IN_PROGRESS, COMPLETE;
 }
