@@ -15,6 +15,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.room.Room;
+
+import com.google.gson.Gson;
+
 import org.jetbrains.annotations.NotNull;
 import java.io.IOException;
 import java.util.LinkedList;
@@ -39,6 +42,7 @@ public class MainActivity extends AppCompatActivity implements TaskAdapter.OnTas
     private RecyclerView.Adapter taskAdapter;
 
     public void renderData(String data) {
+
         TextView headerTextView = findViewById(R.id.dataTextView);
         headerTextView.setText(data);
     }
@@ -51,6 +55,17 @@ public class MainActivity extends AppCompatActivity implements TaskAdapter.OnTas
         String username = usernameSharedPreferences.getString("username", "user");
         TextView nameTextView = findViewById(R.id.greetingTextView);
         nameTextView.setText("Hello " + username + "!"); // Strings are coded to replace this. Needs to be refactored.
+
+        // Get data from the internet
+        // Reference: https://square.github.io/okhttp/
+        OkHttpClient client = new OkHttpClient();
+
+        Request request = new Request.Builder()
+                .url("http://taskmaster-api.herokuapp.com/tasks")
+                .build();
+
+        // Callback: a function to specify what should happen after the request is done/the response is here
+        client.newCall(request).enqueue(new LogDataWhenItComesBackCallback(this));
     }
 
     // This gets called automatically when MainActivity is created/shown for the first time
@@ -85,7 +100,6 @@ public class MainActivity extends AppCompatActivity implements TaskAdapter.OnTas
 
         // Callback: a function to specify what should happen after the request is done/the response is here
         client.newCall(request).enqueue(new LogDataWhenItComesBackCallback(this));
-
 
         // Grab the add a task button
         Button addTaskButton = findViewById(R.id.addTaskButton);
@@ -161,15 +175,32 @@ class LogDataWhenItComesBackCallback implements Callback {
         String responseBody = response.body().string();
         Log.i(TAG, responseBody);
 
+        // Turning JSON into InternetTasks
+        Gson gson = new Gson();
+        InternetTask[] incomingAPITaskArray = gson.fromJson(data, InternetTask[].class);
+
+        // Database
+        database = Room.databaseBuilder(getApplicationContext(), TaskMasterDatabase.class, "task")
+                .allowMainThreadQueries().build();
+
+        this.tasks = new LinkedList<>();
+        this.tasks.addAll(database.taskDao().getAll());
+
         // Defining a class that extends Handler with the curly braces
         Handler handlerForMainThread = new Handler(Looper.getMainLooper()) {
             @Override
             public void handleMessage(Message inputMessage) {
+                Task[] listOfInternetTasks = (Task[])inputMessage.obj;
+                for (Task task: listOfInternetTasks) {
+                    if (database.taskDao().getTasksByTitleAndBody(task.getTitle(), task.getBody()) == null) {
+                        database.taskDao().addTask(task);
+                    }
+                }
                 // Grab the data out of the Message object and pass to actualMainActivityInstance
                 actualMainActivityInstance.renderData((String) inputMessage.obj);
             }
         };
-        
+
         Message completeMessage =
                 handlerForMainThread.obtainMessage(0, responseBody);
         completeMessage.sendToTarget();
