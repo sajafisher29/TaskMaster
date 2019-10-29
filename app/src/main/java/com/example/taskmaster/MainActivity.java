@@ -3,6 +3,9 @@ package com.example.taskmaster;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
+import android.os.Message;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.View;
@@ -12,12 +15,19 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.room.Room;
+import org.jetbrains.annotations.NotNull;
+import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 
 public class MainActivity extends AppCompatActivity implements TaskAdapter.OnTaskInteractionListener{
 
-    private static final String TAG = "MainActivity";
+    private static final String TAG = "fisher.MainActivity";
 
     public String enteredTaskName = null;
     public String enteredTaskPreference = null;
@@ -27,6 +37,11 @@ public class MainActivity extends AppCompatActivity implements TaskAdapter.OnTas
     public TaskMasterDatabase database;
 
     private RecyclerView.Adapter taskAdapter;
+
+    public void renderData(String data) {
+        TextView headerTextView = findViewById(R.id.dataTextView);
+        headerTextView.setText(data);
+    }
 
     @Override
     protected void onResume() {
@@ -59,6 +74,18 @@ public class MainActivity extends AppCompatActivity implements TaskAdapter.OnTas
         final RecyclerView recyclerView = findViewById(R.id.mainRecyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(new TaskAdapter(this.tasks, this));
+
+        // Get data from the internet
+        // Reference: https://square.github.io/okhttp/
+        OkHttpClient client = new OkHttpClient();
+
+        Request request = new Request.Builder()
+                .url("http://taskmaster-api.herokuapp.com/tasks")
+                .build();
+
+        // Callback: a function to specify what should happen after the request is done/the response is here
+        client.newCall(request).enqueue(new LogDataWhenItComesBackCallback(this));
+
 
         // Grab the add a task button
         Button addTaskButton = findViewById(R.id.addTaskButton);
@@ -107,4 +134,44 @@ public class MainActivity extends AppCompatActivity implements TaskAdapter.OnTas
 
     public static final String taskTitle = "taskTitle";
 
+}
+
+class LogDataWhenItComesBackCallback implements Callback {
+
+    MainActivity actualMainActivityInstance;
+
+    public LogDataWhenItComesBackCallback(MainActivity actualMainActivityInstance) {
+        this.actualMainActivityInstance = actualMainActivityInstance;
+    }
+
+    private static final String TAG = "fisher.Callback";
+
+    // OkHttp will call this if the request fails
+
+    @Override
+    public void onFailure(@NotNull Call call, @NotNull IOException error) {
+        Log.e(TAG, "Internet error");
+        Log.e(TAG, error.getMessage());
+    }
+
+    // OkHttp will call this if the request succeeds
+
+    @Override
+    public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
+        String responseBody = response.body().string();
+        Log.i(TAG, responseBody);
+
+        // Defining a class that extends Handler with the curly braces
+        Handler handlerForMainThread = new Handler(Looper.getMainLooper()) {
+            @Override
+            public void handleMessage(Message inputMessage) {
+                // Grab the data out of the Message object and pass to actualMainActivityInstance
+                actualMainActivityInstance.renderData((String) inputMessage.obj);
+            }
+        };
+        
+        Message completeMessage =
+                handlerForMainThread.obtainMessage(0, responseBody);
+        completeMessage.sendToTarget();
+    }
 }
