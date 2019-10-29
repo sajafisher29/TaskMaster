@@ -1,11 +1,9 @@
 package com.example.taskmaster;
 
-import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 import androidx.room.TypeConverters;
 
-@Entity
-public class Task {
+class InternetTask {
 
     @PrimaryKey(autoGenerate = true)
     private long id;
@@ -19,7 +17,7 @@ public class Task {
     }
 
     @TypeConverters(TaskStatusConverter.class)
-    public TaskState taskState;
+    public InternetTask.TaskState taskState;
     public enum TaskState {
         NEW(0),
         ASSIGNED(1),
@@ -36,11 +34,12 @@ public class Task {
 
     private String title;
     private String body;
+    private String state;
 
-    public Task(String title, String body) {
+    public InternetTask(String title, String body) {
         this.title = title;
         this.body = body;
-        this.taskState = TaskState.NEW;
+//        this.taskState = state;
     }
 
     public String getTitle() {
@@ -59,11 +58,11 @@ public class Task {
         this.body = body;
     }
 
-    public TaskState getState() {
+    public InternetTask.TaskState getState() {
         return taskState;
     }
 
-    public void setState(TaskState state) {
+    public void setState(InternetTask.TaskState state) {
         this.taskState = state;
     }
 
@@ -72,4 +71,3 @@ public class Task {
         return String.format("%s is %s: %s", this.title, this.taskState, this.body);
     }
 }
-
