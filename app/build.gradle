@@ -46,4 +46,6 @@ dependencies {
     implementation "androidx.room:room-rxjava2:$room_version"
     // Test helpers
     testImplementation "androidx.room:room-testing:$room_version"
+    implementation("com.squareup.okhttp3:okhttp:4.2.1")
+    testImplementation("com.squareup.okhttp3:mockwebserver:4.2.1")
 }
