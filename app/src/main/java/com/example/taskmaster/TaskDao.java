@@ -14,6 +14,12 @@ public interface TaskDao {
     @Query("SELECT * FROM task ORDER BY id DESC")
     List<Task> getAll();
 
+    @Query("SELECT * FROM task WHERE id=:id")
+    Task getTasksById(long id);
+
+    @Query("SELECT * FROM task WHERE title=:title AND body=:body")
+    Task getTasksByTitleAndBody(String title, String body);
+
     @Insert
     void addTask(Task task);
 
