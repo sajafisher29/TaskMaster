@@ -31,15 +31,10 @@ public class MainActivity extends AppCompatActivity implements TaskAdapter.OnTas
 
     public String enteredTaskName = null;
     public String enteredTaskPreference = null;
-    private List<Task> tasks;
+    public List<Task> tasks;
     public TaskMasterDatabase database;
+    RecyclerView recyclerView;
     private RecyclerView.Adapter taskAdapter;
-
-    public void renderData(String data) {
-
-        TextView headerTextView = findViewById(R.id.dataTextView);
-        headerTextView.setText(data);
-    }
 
     @Override
     protected void onResume() {
@@ -64,7 +59,7 @@ public class MainActivity extends AppCompatActivity implements TaskAdapter.OnTas
 
     // This gets called automatically when MainActivity is created/shown for the first time
     @Override
-    public void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
@@ -141,10 +136,10 @@ public class MainActivity extends AppCompatActivity implements TaskAdapter.OnTas
 
 class LogDataWhenItComesBackCallback implements Callback {
 
-    MainActivity actualMainActivityInstance;
+    MainActivity mainActivityInstance;
 
     public LogDataWhenItComesBackCallback(MainActivity actualMainActivityInstance) {
-        this.actualMainActivityInstance = actualMainActivityInstance;
+        this.mainActivityInstance = actualMainActivityInstance;
     }
 
     private static final String TAG = "fisher.Callback";
@@ -169,7 +164,7 @@ class LogDataWhenItComesBackCallback implements Callback {
         Task[] incomingAPITaskArray = gson.fromJson(responseBody, Task[].class);
 
         // Database
-        TaskMasterDatabase database = Room.databaseBuilder(actualMainActivityInstance.getApplicationContext(), TaskMasterDatabase.class, "task")
+        TaskMasterDatabase database = Room.databaseBuilder(mainActivityInstance.getApplicationContext(), TaskMasterDatabase.class, "task")
                 .allowMainThreadQueries().build();
 
         // Defining a class that extends Handler with the curly braces
@@ -187,7 +182,7 @@ class LogDataWhenItComesBackCallback implements Callback {
                 }
 
                 mainActivityInstance.tasks = database.taskDao().getAll();
-                RecyclerView recyclerView = findViewById(R.id.mainRecyclerView);
+                recyclerView = findViewById(R.id.mainRecyclerView);
                 recyclerView.setLayoutManager(new LinearLayoutManager(mainActivityInstance));
                 recyclerView.setAdapter(new TaskAdapter(mainActivityInstance.tasks, mainActivityInstance));
 
