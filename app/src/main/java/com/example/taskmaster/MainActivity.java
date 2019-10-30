@@ -15,12 +15,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.room.Room;
-
 import com.google.gson.Gson;
-
 import org.jetbrains.annotations.NotNull;
 import java.io.IOException;
-import java.util.LinkedList;
 import java.util.List;
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -34,11 +31,8 @@ public class MainActivity extends AppCompatActivity implements TaskAdapter.OnTas
 
     public String enteredTaskName = null;
     public String enteredTaskPreference = null;
-
     private List<Task> tasks;
-
     public TaskMasterDatabase database;
-
     private RecyclerView.Adapter taskAdapter;
 
     public void renderData(String data) {
@@ -74,26 +68,9 @@ public class MainActivity extends AppCompatActivity implements TaskAdapter.OnTas
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        // Database
-        database = Room.databaseBuilder(getApplicationContext(), TaskMasterDatabase.class, "task")
-                    .allowMainThreadQueries().build();
-
-        this.tasks = new LinkedList<>();
-        this.tasks.addAll(database.taskDao().getAll());
-
-//        tasks.add(new Task("Clear the blackberry", "Don't forget the roots!"));
-//        tasks.add(new Task("Clear the English ivy", "Roll it like a carpet and don't tear it off the trees."));
-//        tasks.add(new Task("Clear planting space", "Ask the park staff for a Fall Planting event"));
-
-        // Render the tasks in the RecyclerView https://developer.android.com/guide/topics/ui/layout/recyclerview
-        final RecyclerView recyclerView = findViewById(R.id.mainRecyclerView);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        recyclerView.setAdapter(new TaskAdapter(this.tasks, this));
-
         // Get data from the internet
         // Reference: https://square.github.io/okhttp/
         OkHttpClient client = new OkHttpClient();
-
         Request request = new Request.Builder()
                 .url("http://taskmaster-api.herokuapp.com/tasks")
                 .build();
@@ -134,6 +111,18 @@ public class MainActivity extends AppCompatActivity implements TaskAdapter.OnTas
             }
         });
 
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+        OkHttpClient client = new OkHttpClient();
+        Request request = new Request.Builder()
+                .url("http://taskmaster-api.herokuapp.com/tasks")
+                .build();
+
+        client.newCall(request).enqueue(new LogDataWhenItComesBackCallback(this));
     }
 
     public void taskSelected(Task task) {
@@ -177,32 +166,36 @@ class LogDataWhenItComesBackCallback implements Callback {
 
         // Turning JSON into InternetTasks
         Gson gson = new Gson();
-        InternetTask[] incomingAPITaskArray = gson.fromJson(data, InternetTask[].class);
+        Task[] incomingAPITaskArray = gson.fromJson(responseBody, Task[].class);
 
         // Database
-        database = Room.databaseBuilder(getApplicationContext(), TaskMasterDatabase.class, "task")
+        TaskMasterDatabase database = Room.databaseBuilder(actualMainActivityInstance.getApplicationContext(), TaskMasterDatabase.class, "task")
                 .allowMainThreadQueries().build();
-
-        this.tasks = new LinkedList<>();
-        this.tasks.addAll(database.taskDao().getAll());
 
         // Defining a class that extends Handler with the curly braces
         Handler handlerForMainThread = new Handler(Looper.getMainLooper()) {
             @Override
             public void handleMessage(Message inputMessage) {
-                Task[] listOfInternetTasks = (Task[])inputMessage.obj;
-                for (Task task: listOfInternetTasks) {
+
+                Task[] listOfTasks = (Task[]) inputMessage.obj;
+
+                for (Task task : listOfTasks) {
+
                     if (database.taskDao().getTasksByTitleAndBody(task.getTitle(), task.getBody()) == null) {
                         database.taskDao().addTask(task);
                     }
                 }
-                // Grab the data out of the Message object and pass to actualMainActivityInstance
-                actualMainActivityInstance.renderData((String) inputMessage.obj);
+
+                mainActivityInstance.tasks = database.taskDao().getAll();
+                RecyclerView recyclerView = findViewById(R.id.mainRecyclerView);
+                recyclerView.setLayoutManager(new LinearLayoutManager(mainActivityInstance));
+                recyclerView.setAdapter(new TaskAdapter(mainActivityInstance.tasks, mainActivityInstance));
+
             }
         };
 
         Message completeMessage =
-                handlerForMainThread.obtainMessage(0, responseBody);
+                handlerForMainThread.obtainMessage(0, listOfTasks);
         completeMessage.sendToTarget();
     }
 }
