@@ -15,9 +15,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.room.Room;
-
 import com.google.gson.Gson;
-
 import org.jetbrains.annotations.NotNull;
 import java.io.IOException;
 import java.util.LinkedList;
@@ -34,11 +32,8 @@ public class MainActivity extends AppCompatActivity implements TaskAdapter.OnTas
 
     public String enteredTaskName = null;
     public String enteredTaskPreference = null;
-
     private List<Task> tasks;
-
     public TaskMasterDatabase database;
-
     private RecyclerView.Adapter taskAdapter;
 
     public void renderData(String data) {
@@ -54,7 +49,11 @@ public class MainActivity extends AppCompatActivity implements TaskAdapter.OnTas
         SharedPreferences usernameSharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         String username = usernameSharedPreferences.getString("username", "user");
         TextView nameTextView = findViewById(R.id.greetingTextView);
-        nameTextView.setText("Hello " + username + "!"); // Strings are coded to replace this. Needs to be refactored.
+        if (username.equals("user") || username.equals("")) {
+            myTaskTitle.setText("My Tasks");
+        } else {
+            myTaskTitle.setText(username + "'s Tasks");
+        }
 
         // Get data from the internet
         // Reference: https://square.github.io/okhttp/
@@ -68,38 +67,40 @@ public class MainActivity extends AppCompatActivity implements TaskAdapter.OnTas
         client.newCall(request).enqueue(new LogDataWhenItComesBackCallback(this));
     }
 
+
+        if (username.equals("My") || username.equals("")) {
+            myTaskTitle.setText("My Tasks");
+        } else {
+            myTaskTitle.setText("" + username + "'s Tasks");
+        }
+
+        OkHttpClient client = new OkHttpClient();
+        Request request = new Request.Builder()
+                .url("http://taskmaster-api.herokuapp.com/tasks")
+                .build();
+
+        client.newCall(request).enqueue(new LogDataWhenItComesBackCallback(this));
+    }
+
     // This gets called automatically when MainActivity is created/shown for the first time
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        // Database
-        database = Room.databaseBuilder(getApplicationContext(), TaskMasterDatabase.class, "task")
-                    .allowMainThreadQueries().build();
-
-        this.tasks = new LinkedList<>();
-        this.tasks.addAll(database.taskDao().getAll());
-
-//        tasks.add(new Task("Clear the blackberry", "Don't forget the roots!"));
-//        tasks.add(new Task("Clear the English ivy", "Roll it like a carpet and don't tear it off the trees."));
-//        tasks.add(new Task("Clear planting space", "Ask the park staff for a Fall Planting event"));
-
-        // Render the tasks in the RecyclerView https://developer.android.com/guide/topics/ui/layout/recyclerview
-        final RecyclerView recyclerView = findViewById(R.id.mainRecyclerView);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        recyclerView.setAdapter(new TaskAdapter(this.tasks, this));
-
         // Get data from the internet
         // Reference: https://square.github.io/okhttp/
         OkHttpClient client = new OkHttpClient();
-
         Request request = new Request.Builder()
                 .url("http://taskmaster-api.herokuapp.com/tasks")
                 .build();
 
         // Callback: a function to specify what should happen after the request is done/the response is here
         client.newCall(request).enqueue(new LogDataWhenItComesBackCallback(this));
+
+        // Database
+        database = Room.databaseBuilder(getApplicationContext(), TaskMasterDatabase.class, "task")
+                    .allowMainThreadQueries().build();
 
         // Grab the add a task button
         Button addTaskButton = findViewById(R.id.addTaskButton);
@@ -134,6 +135,18 @@ public class MainActivity extends AppCompatActivity implements TaskAdapter.OnTas
             }
         });
 
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+        OkHttpClient client = new OkHttpClient();
+        Request request = new Request.Builder()
+                .url("http://taskmaster-api.herokuapp.com/tasks")
+                .build();
+
+        client.newCall(request).enqueue(new LogDataWhenItComesBackCallback(this));
     }
 
     public void taskSelected(Task task) {
