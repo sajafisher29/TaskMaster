@@ -16,21 +16,21 @@ class InternetTask {
         this.id = id;
     }
 
-    @TypeConverters(TaskStatusConverter.class)
-    public InternetTask.TaskState taskState;
-    public enum TaskState {
-        NEW(0),
-        ASSIGNED(1),
-        IN_PROGRESS(2),
-        COMPLETE(3);
-        private int code;
-        TaskState(int code){
-            this.code = code;
-        }
-        public int getCode() {
-            return code;
-        }
-    }
+//    @TypeConverters(TaskStatusConverter.class)
+//    public InternetTask.TaskState taskState;
+//    public enum TaskState {
+//        NEW(0),
+//        ASSIGNED(1),
+//        IN_PROGRESS(2),
+//        COMPLETE(3);
+//        private int code;
+//        TaskState(int code){
+//            this.code = code;
+//        }
+//        public int getCode() {
+//            return code;
+//        }
+//    }
 
     private String title;
     private String body;
@@ -58,16 +58,16 @@ class InternetTask {
         this.body = body;
     }
 
-    public InternetTask.TaskState getState() {
-        return taskState;
-    }
-
-    public void setState(InternetTask.TaskState state) {
-        this.taskState = state;
-    }
+//    public InternetTask.TaskState getState() {
+//        return taskState;
+//    }
+//
+//    public void setState(InternetTask.TaskState state) {
+//        this.taskState = state;
+//    }
 
     @Override
     public String toString() {
-        return String.format("%s is %s: %s", this.title, this.taskState, this.body);
+        return String.format("%s: %s", this.title, this.body);
     }
 }

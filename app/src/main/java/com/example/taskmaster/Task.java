@@ -18,21 +18,21 @@ public class Task {
         this.id = id;
     }
 
-    @TypeConverters(TaskStatusConverter.class)
-    public TaskState taskState;
-    public enum TaskState {
-        NEW(0),
-        ASSIGNED(1),
-        IN_PROGRESS(2),
-        COMPLETE(3);
-        private int code;
-        TaskState(int code){
-            this.code = code;
-        }
-        public int getCode() {
-            return code;
-        }
-    }
+//    @TypeConverters(TaskStatusConverter.class)
+//    public TaskState taskState;
+//    public enum TaskState {
+//        NEW(0),
+//        ASSIGNED(1),
+//        IN_PROGRESS(2),
+//        COMPLETE(3);
+//        private int code;
+//        TaskState(int code){
+//            this.code = code;
+//        }
+//        public int getCode() {
+//            return code;
+//        }
+//    }
 
     private String title;
     private String body;
@@ -40,7 +40,7 @@ public class Task {
     public Task(String title, String body) {
         this.title = title;
         this.body = body;
-        this.taskState = TaskState.NEW;
+//        this.taskState = TaskState.NEW;
     }
 
     public String getTitle() {
@@ -59,17 +59,20 @@ public class Task {
         this.body = body;
     }
 
-    public TaskState getState() {
-        return taskState;
-    }
-
-    public void setState(TaskState state) {
-        this.taskState = state;
-    }
+//    public TaskState getState() {
+//        return taskState;
+//    }
+//
+//    public void setState(TaskState state) {
+//        this.taskState = state;
+//    }
 
     @Override
     public String toString() {
-        return String.format("%s is %s: %s", this.title, this.taskState, this.body);
+        return String.format("%s: %s", this.title, this.body);
+    }
+
+    public void setCloudId(long id) {
     }
 }
 

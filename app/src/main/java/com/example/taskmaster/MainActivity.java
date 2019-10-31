@@ -63,6 +63,13 @@ public class MainActivity extends AppCompatActivity implements TaskAdapter.OnTas
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        // Database
+        database = Room.databaseBuilder(getApplicationContext(), TaskMasterDatabase.class, "task")
+                .fallbackToDestructiveMigration()
+                .allowMainThreadQueries().build();
+
+        database.taskDao().nukeTable();
+
         // Get data from the internet
         // Reference: https://square.github.io/okhttp/
         OkHttpClient client = new OkHttpClient();
@@ -163,10 +170,6 @@ class LogDataWhenItComesBackCallback implements Callback {
         Gson gson = new Gson();
         Task[] incomingAPITaskArray = gson.fromJson(responseBody, Task[].class);
 
-        // Database
-        TaskMasterDatabase database = Room.databaseBuilder(mainActivityInstance.getApplicationContext(), TaskMasterDatabase.class, "task")
-                .allowMainThreadQueries().build();
-
         // Defining a class that extends Handler with the curly braces
         Handler handlerForMainThread = new Handler(Looper.getMainLooper()) {
             @Override
@@ -176,12 +179,15 @@ class LogDataWhenItComesBackCallback implements Callback {
 
                 for (Task task : listOfTasks) {
 
-                    if (database.taskDao().getTasksByTitleAndBody(task.getTitle(), task.getBody()) == null) {
-                        database.taskDao().addTask(task);
+                    task.setCloudId(task.getId());
+                    task.setId(0);
+
+                    if (mainActivityInstance.database.taskDao().getTasksByTitleAndBody(task.getTitle(), task.getBody()) == null) {
+                        mainActivityInstance.database.taskDao().addTask(task);
                     }
                 }
 
-                mainActivityInstance.tasks = database.taskDao().getAll();
+                mainActivityInstance.tasks = mainActivityInstance.database.taskDao().getAll();
                 mainActivityInstance.recyclerView = mainActivityInstance.findViewById(R.id.mainRecyclerView);
                 mainActivityInstance.recyclerView.setLayoutManager(new LinearLayoutManager(mainActivityInstance));
                 mainActivityInstance.recyclerView.setAdapter(new TaskAdapter(mainActivityInstance.tasks, mainActivityInstance));
@@ -190,7 +196,7 @@ class LogDataWhenItComesBackCallback implements Callback {
         };
 
         Message completeMessage =
-                handlerForMainThread.obtainMessage(0, listOfTasks);
+                handlerForMainThread.obtainMessage(0, incomingAPITaskArray);
         completeMessage.sendToTarget();
     }
 }

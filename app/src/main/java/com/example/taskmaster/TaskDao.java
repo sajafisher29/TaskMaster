@@ -11,6 +11,9 @@ import java.util.List;
 @Dao
 public interface TaskDao {
 
+    @Query("DELETE FROM task")
+    public void nukeTable();
+
     @Query("SELECT * FROM task ORDER BY id DESC")
     List<Task> getAll();
 
