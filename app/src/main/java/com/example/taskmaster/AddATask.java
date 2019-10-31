@@ -41,6 +41,9 @@ public class AddATask extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_a_task);
 
+        database = Room.databaseBuilder(getApplicationContext(), TaskMasterDatabase.class, "task").allowMainThreadQueries().build();
+
+
         Button addTask = findViewById(R.id.addTaskButton);
         addTask.setOnClickListener((event) -> {
 
@@ -53,9 +56,8 @@ public class AddATask extends AppCompatActivity {
             String username = preferences.getString("username", "user");
 //            newTask.setAssignedUser(username);
 
-            database = Room.databaseBuilder(getApplicationContext(), TaskMasterDatabase.class, "task").allowMainThreadQueries().build();
             database.taskDao().addTask(newTask);
-
+            showSubmittedMessage();
             // Hide keyboard once the Add Button is clicked
             InputMethodManager inputManager = (InputMethodManager)
                     getSystemService(Context.INPUT_METHOD_SERVICE);
@@ -67,7 +69,7 @@ public class AddATask extends AppCompatActivity {
         });
     }
 
-    public void showSubmittedMessage(View view) {
+    public void showSubmittedMessage() {
 
         OkHttpClient client = new OkHttpClient();
         String taskTitle = findViewById(R.id.taskTitleInput).toString();
@@ -102,9 +104,9 @@ class PostTasksToBackendServerCallback implements Callback {
     }
 
     @Override
-    public void onFailure(@NotNull Call call, @NotNull IOException e) {
-        Log.e(TAG, "something went wrong with connecting to backend server");
-        Log.e(TAG, e.getMessage());
+    public void onFailure(@NotNull Call call, @NotNull IOException error) {
+        Log.e(TAG, "Something went wrong with connecting to backend server");
+        Log.e(TAG, error.getMessage());
     }
 
     @Override
