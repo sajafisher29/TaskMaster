@@ -1,14 +1,41 @@
 {
-    "providers": {
-        "awscloudformation": {
-            "AuthRoleName": "amplify-taskmaster-tasky-110536-authRole",
-            "UnauthRoleArn": "arn:aws:iam::862750062005:role/amplify-taskmaster-tasky-110536-unauthRole",
-            "AuthRoleArn": "arn:aws:iam::862750062005:role/amplify-taskmaster-tasky-110536-authRole",
-            "Region": "us-west-2",
-            "DeploymentBucketName": "amplify-taskmaster-tasky-110536-deployment",
-            "UnauthRoleName": "amplify-taskmaster-tasky-110536-unauthRole",
-            "StackName": "amplify-taskmaster-tasky-110536",
-            "StackId": "arn:aws:cloudformation:us-west-2:862750062005:stack/amplify-taskmaster-tasky-110536/098b9a80-fc09-11e9-8137-02bd245fa220"
-        }
-    }
+	"providers": {
+		"awscloudformation": {
+			"AuthRoleName": "amplify-taskmaster-tasky-110536-authRole",
+			"UnauthRoleArn": "arn:aws:iam::862750062005:role/amplify-taskmaster-tasky-110536-unauthRole",
+			"AuthRoleArn": "arn:aws:iam::862750062005:role/amplify-taskmaster-tasky-110536-authRole",
+			"Region": "us-west-2",
+			"DeploymentBucketName": "amplify-taskmaster-tasky-110536-deployment",
+			"UnauthRoleName": "amplify-taskmaster-tasky-110536-unauthRole",
+			"StackName": "amplify-taskmaster-tasky-110536",
+			"StackId": "arn:aws:cloudformation:us-west-2:862750062005:stack/amplify-taskmaster-tasky-110536/098b9a80-fc09-11e9-8137-02bd245fa220"
+		}
+	},
+	"api": {
+		"taskwork": {
+			"service": "AppSync",
+			"providerPlugin": "awscloudformation",
+			"output": {
+				"authConfig": {
+					"additionalAuthenticationProviders": [],
+					"defaultAuthentication": {
+						"authenticationType": "API_KEY",
+						"apiKeyConfig": {
+							"description": "taskworkapikey",
+							"apiKeyExpirationDays": 7
+						}
+					}
+				},
+				"GraphQLAPIIdOutput": "2awual4envevndeyw4vg343uqm",
+				"GraphQLAPIEndpointOutput": "https://spz2fj2d4zapto3v6q4lhz24g4.appsync-api.us-west-2.amazonaws.com/graphql",
+				"GraphQLAPIKeyOutput": "da2-s7yl5dfcnrdzznuyb6lr2labwa"
+			},
+			"providerMetadata": {
+				"s3TemplateURL": "https://s3.amazonaws.com/amplify-taskmaster-tasky-110536-deployment/amplify-cfn-templates/api/cloudformation-template.json",
+				"logicalId": "apitaskwork"
+			},
+			"lastPushTimeStamp": "2019-10-31T19:14:17.197Z",
+			"lastPushDirHash": "XT8MDpYlkAtGEs0bbCGa0LbD8eA="
+		}
+	}
 }

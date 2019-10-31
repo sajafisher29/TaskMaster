@@ -1,6 +1,6 @@
 {
 	"api": {
-		"taskmasterapi": {
+		"taskwork": {
 			"service": "AppSync",
 			"providerPlugin": "awscloudformation",
 			"output": {
@@ -9,8 +9,8 @@
 					"defaultAuthentication": {
 						"authenticationType": "API_KEY",
 						"apiKeyConfig": {
-							"description": "taskmasterapikey",
-							"apiKeyExpirationDays": "150"
+							"description": "taskworkapikey",
+							"apiKeyExpirationDays": 7
 						}
 					}
 				}
