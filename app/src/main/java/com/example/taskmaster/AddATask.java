@@ -51,7 +51,7 @@ public class AddATask extends AppCompatActivity {
             Task newTask = new Task(title, body);
             SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
             String username = preferences.getString("username", "user");
-            newTask.setAssignedUser(username);
+//            newTask.setAssignedUser(username);
 
             database = Room.databaseBuilder(getApplicationContext(), TaskMasterDatabase.class, "task").allowMainThreadQueries().build();
             database.taskDao().addTask(newTask);
@@ -82,7 +82,7 @@ public class AddATask extends AppCompatActivity {
                 .post(requestBody)
                 .build();
 
-        client.newCall(request).enqueue(new LogDataWhenItComesBackCallback(this));
+        client.newCall(request).enqueue(new PostTasksToBackendServerCallback(this));
 
         Task newTask = new Task(taskTitle, taskDescription);
         database.taskDao().addTask(newTask);
@@ -93,11 +93,11 @@ public class AddATask extends AppCompatActivity {
     }
 }
 
-class PostTasksToBackendServer implements Callback {
+class PostTasksToBackendServerCallback implements Callback {
 
     AddATask addTaskActivity;
 
-    public PostTasksToBackendServer(AddATask addTaskActivity) {
+    public PostTasksToBackendServerCallback(AddATask addTaskActivity) {
         this.addTaskActivity = addTaskActivity;
     }
 
