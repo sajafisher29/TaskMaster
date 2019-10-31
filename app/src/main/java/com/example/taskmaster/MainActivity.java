@@ -138,8 +138,8 @@ class LogDataWhenItComesBackCallback implements Callback {
 
     MainActivity mainActivityInstance;
 
-    public LogDataWhenItComesBackCallback(MainActivity actualMainActivityInstance) {
-        this.mainActivityInstance = actualMainActivityInstance;
+    public LogDataWhenItComesBackCallback(MainActivity mainActivityInstance) {
+        this.mainActivityInstance = mainActivityInstance;
     }
 
     private static final String TAG = "fisher.Callback";
@@ -182,9 +182,9 @@ class LogDataWhenItComesBackCallback implements Callback {
                 }
 
                 mainActivityInstance.tasks = database.taskDao().getAll();
-                recyclerView = findViewById(R.id.mainRecyclerView);
-                recyclerView.setLayoutManager(new LinearLayoutManager(mainActivityInstance));
-                recyclerView.setAdapter(new TaskAdapter(mainActivityInstance.tasks, mainActivityInstance));
+                mainActivityInstance.recyclerView = mainActivityInstance.findViewById(R.id.mainRecyclerView);
+                mainActivityInstance.recyclerView.setLayoutManager(new LinearLayoutManager(mainActivityInstance));
+                mainActivityInstance.recyclerView.setAdapter(new TaskAdapter(mainActivityInstance.tasks, mainActivityInstance));
 
             }
         };
