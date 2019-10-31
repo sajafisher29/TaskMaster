@@ -3,5 +3,10 @@
         "configLevel": "project",
         "useProfile": true,
         "profileName": "sajafisher"
+    },
+    "tasky": {
+        "configLevel": "project",
+        "useProfile": true,
+        "profileName": "sajafisher"
     }
 }
