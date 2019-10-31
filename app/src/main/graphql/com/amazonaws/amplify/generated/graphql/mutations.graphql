@@ -1,0 +1,25 @@
+# this is an auto generated file. This will be overwritten
+mutation CreateTask($input: CreateTaskInput!) {
+  createTask(input: $input) {
+    id
+    name
+    description
+    taskState
+  }
+}
+mutation UpdateTask($input: UpdateTaskInput!) {
+  updateTask(input: $input) {
+    id
+    name
+    description
+    taskState
+  }
+}
+mutation DeleteTask($input: DeleteTaskInput!) {
+  deleteTask(input: $input) {
+    id
+    name
+    description
+    taskState
+  }
+}

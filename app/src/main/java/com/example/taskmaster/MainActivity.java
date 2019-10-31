@@ -14,7 +14,8 @@ import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import androidx.room.Room;
+import com.amazonaws.mobile.config.AWSConfiguration;
+import com.amazonaws.mobileconnectors.appsync.AWSAppSyncClient;
 import com.google.gson.Gson;
 import org.jetbrains.annotations.NotNull;
 import java.io.IOException;
@@ -35,6 +36,7 @@ public class MainActivity extends AppCompatActivity implements TaskAdapter.OnTas
     public TaskMasterDatabase database;
     RecyclerView recyclerView;
     private RecyclerView.Adapter taskAdapter;
+    AWSAppSyncClient awsAppSyncClient;
 
     @Override
     protected void onResume() {
@@ -63,22 +65,28 @@ public class MainActivity extends AppCompatActivity implements TaskAdapter.OnTas
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        // Database
-        database = Room.databaseBuilder(getApplicationContext(), TaskMasterDatabase.class, "task")
-                .fallbackToDestructiveMigration()
-                .allowMainThreadQueries().build();
-
-        database.taskDao().nukeTable();
-
-        // Get data from the internet
-        // Reference: https://square.github.io/okhttp/
-        OkHttpClient client = new OkHttpClient();
-        Request request = new Request.Builder()
-                .url("http://taskmaster-api.herokuapp.com/tasks")
+        // Connect to AWS
+        awsAppSyncClient = AWSAppSyncClient.builder()
+                .context(getApplicationContext())
+                .awsConfiguration(new AWSConfiguration(getApplicationContext()))
                 .build();
 
-        // Callback: a function to specify what should happen after the request is done/the response is here
-        client.newCall(request).enqueue(new LogDataWhenItComesBackCallback(this));
+//        // Database
+//        database = Room.databaseBuilder(getApplicationContext(), TaskMasterDatabase.class, "task")
+//                .fallbackToDestructiveMigration()
+//                .allowMainThreadQueries().build();
+//
+//        database.taskDao().nukeTable();
+
+//        // Get data from the internet
+//        // Reference: https://square.github.io/okhttp/
+//        OkHttpClient client = new OkHttpClient();
+//        Request request = new Request.Builder()
+//                .url("http://taskmaster-api.herokuapp.com/tasks")
+//                .build();
+//
+//        // Callback: a function to specify what should happen after the request is done/the response is here
+//        client.newCall(request).enqueue(new LogDataWhenItComesBackCallback(this));
 
         // Grab the add a task button
         Button addTaskButton = findViewById(R.id.addTaskButton);

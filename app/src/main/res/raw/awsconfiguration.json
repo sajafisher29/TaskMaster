@@ -6,11 +6,11 @@
     },
     "AppSync": {
         "Default": {
-            "ApiUrl": "https://bhgtzrh57ndlln4qulgaibcteq.appsync-api.us-west-2.amazonaws.com/graphql",
+            "ApiUrl": "https://spz2fj2d4zapto3v6q4lhz24g4.appsync-api.us-west-2.amazonaws.com/graphql",
             "Region": "us-west-2",
             "AuthMode": "API_KEY",
-            "ApiKey": "da2-oqbywlt63vbx3mp6lasoipy4mm",
-            "ClientDatabasePrefix": "taskmasterapi_API_KEY"
+            "ApiKey": "da2-s7yl5dfcnrdzznuyb6lr2labwa",
+            "ClientDatabasePrefix": "taskwork_API_KEY"
         }
     }
 }

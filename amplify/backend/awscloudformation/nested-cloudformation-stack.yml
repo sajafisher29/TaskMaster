@@ -68,18 +68,18 @@
 				}
 			}
 		},
-		"apitaskmasterapi": {
+		"apitaskwork": {
 			"Type": "AWS::CloudFormation::Stack",
 			"Properties": {
-				"TemplateURL": "https://s3.amazonaws.com/amplify-taskmaster-local-154122-deployment/amplify-cfn-templates/api/cloudformation-template.json",
+				"TemplateURL": "https://s3.amazonaws.com/amplify-taskmaster-tasky-110536-deployment/amplify-cfn-templates/api/cloudformation-template.json",
 				"Parameters": {
 					"CreateAPIKey": 1,
-					"AppSyncApiName": "taskmasterapi",
+					"AppSyncApiName": "taskwork",
 					"DynamoDBBillingMode": "PAY_PER_REQUEST",
 					"DynamoDBEnableServerSideEncryption": "false",
-					"S3DeploymentBucket": "amplify-taskmaster-local-154122-deployment",
-					"S3DeploymentRootKey": "amplify-appsync-files/f0dfd631d9e903831eea25befee06e2dca0119cf",
-					"env": "local"
+					"S3DeploymentBucket": "amplify-taskmaster-tasky-110536-deployment",
+					"S3DeploymentRootKey": "amplify-appsync-files/04e7b6e062b368c81cf0bd12667c9483819e5a59",
+					"env": "tasky"
 				}
 			}
 		}
