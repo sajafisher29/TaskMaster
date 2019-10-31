@@ -4,10 +4,12 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.room.Room;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
@@ -47,6 +49,9 @@ public class AddATask extends AppCompatActivity {
             TextView bodyTextView = findViewById(R.id.taskDescriptionInput);
             String body = bodyTextView.getText().toString();
             Task newTask = new Task(title, body);
+            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
+            String username = preferences.getString("username", "user");
+            newTask.setAssignedUser(username);
 
             database = Room.databaseBuilder(getApplicationContext(), TaskMasterDatabase.class, "task").allowMainThreadQueries().build();
             database.taskDao().addTask(newTask);
@@ -61,12 +66,16 @@ public class AddATask extends AppCompatActivity {
             toast.show();
         });
     }
+
     public void showSubmittedMessage(View view) {
 
         OkHttpClient client = new OkHttpClient();
+        String taskTitle = findViewById(R.id.taskTitleInput).toString();
+        String taskDescription = findViewById(R.id.taskDescriptionInput).toString();
+
         RequestBody requestBody = new FormBody.Builder()
-                .add("title", taskTitleInput.getText().toString())
-                .add("body", taskDescriptionInput.getText().toString())
+                .add("title", taskTitle)
+                .add("body", taskDescription)
                 .build();
         Request request = new Request.Builder()
                 .url("http://taskmaster-api.herokuapp.com/tasks")
@@ -75,7 +84,7 @@ public class AddATask extends AppCompatActivity {
 
         client.newCall(request).enqueue(new LogDataWhenItComesBackCallback(this));
 
-        Task newTask = new Task(taskTitleInput.getText().toString(), taskDescriptionInput.getText().toString(), "new");
+        Task newTask = new Task(taskTitle, taskDescription);
         database.taskDao().addTask(newTask);
 
         Intent addTaskToMainPageIntent = new Intent(this, MainActivity.class);
