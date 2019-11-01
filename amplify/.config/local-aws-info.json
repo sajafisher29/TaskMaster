@@ -8,5 +8,10 @@
         "configLevel": "project",
         "useProfile": true,
         "profileName": "sajafisher"
+    },
+    "cf": {
+        "configLevel": "project",
+        "useProfile": true,
+        "profileName": "sajafisher"
     }
 }

@@ -71,15 +71,15 @@
 		"apitaskwork": {
 			"Type": "AWS::CloudFormation::Stack",
 			"Properties": {
-				"TemplateURL": "https://s3.amazonaws.com/amplify-taskmaster-tasky-110536-deployment/amplify-cfn-templates/api/cloudformation-template.json",
+				"TemplateURL": "https://s3.amazonaws.com/amplify-taskmaster-cf-110539-deployment/amplify-cfn-templates/api/cloudformation-template.json",
 				"Parameters": {
 					"CreateAPIKey": 1,
 					"AppSyncApiName": "taskwork",
 					"DynamoDBBillingMode": "PAY_PER_REQUEST",
 					"DynamoDBEnableServerSideEncryption": "false",
-					"S3DeploymentBucket": "amplify-taskmaster-tasky-110536-deployment",
-					"S3DeploymentRootKey": "amplify-appsync-files/04e7b6e062b368c81cf0bd12667c9483819e5a59",
-					"env": "tasky"
+					"S3DeploymentBucket": "amplify-taskmaster-cf-110539-deployment",
+					"S3DeploymentRootKey": "amplify-appsync-files/7aefda6ee596f9f43494e274618ae3a134b86cdb",
+					"env": "cf"
 				}
 			}
 		}

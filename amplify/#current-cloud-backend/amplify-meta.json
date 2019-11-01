@@ -1,14 +1,14 @@
 {
 	"providers": {
 		"awscloudformation": {
-			"AuthRoleName": "amplify-taskmaster-tasky-110536-authRole",
-			"UnauthRoleArn": "arn:aws:iam::862750062005:role/amplify-taskmaster-tasky-110536-unauthRole",
-			"AuthRoleArn": "arn:aws:iam::862750062005:role/amplify-taskmaster-tasky-110536-authRole",
+			"AuthRoleName": "amplify-taskmaster-cf-110539-authRole",
+			"UnauthRoleArn": "arn:aws:iam::862750062005:role/amplify-taskmaster-cf-110539-unauthRole",
+			"AuthRoleArn": "arn:aws:iam::862750062005:role/amplify-taskmaster-cf-110539-authRole",
 			"Region": "us-west-2",
-			"DeploymentBucketName": "amplify-taskmaster-tasky-110536-deployment",
-			"UnauthRoleName": "amplify-taskmaster-tasky-110536-unauthRole",
-			"StackName": "amplify-taskmaster-tasky-110536",
-			"StackId": "arn:aws:cloudformation:us-west-2:862750062005:stack/amplify-taskmaster-tasky-110536/098b9a80-fc09-11e9-8137-02bd245fa220"
+			"DeploymentBucketName": "amplify-taskmaster-cf-110539-deployment",
+			"UnauthRoleName": "amplify-taskmaster-cf-110539-unauthRole",
+			"StackName": "amplify-taskmaster-cf-110539",
+			"StackId": "arn:aws:cloudformation:us-west-2:862750062005:stack/amplify-taskmaster-cf-110539/3552a090-fcd2-11e9-a1eb-06701ab4dd6c"
 		}
 	},
 	"api": {
@@ -26,16 +26,16 @@
 						}
 					}
 				},
-				"GraphQLAPIIdOutput": "2awual4envevndeyw4vg343uqm",
-				"GraphQLAPIEndpointOutput": "https://spz2fj2d4zapto3v6q4lhz24g4.appsync-api.us-west-2.amazonaws.com/graphql",
-				"GraphQLAPIKeyOutput": "da2-s7yl5dfcnrdzznuyb6lr2labwa"
+				"GraphQLAPIIdOutput": "k6th6spkbvaudaorc46k3fk5jq",
+				"GraphQLAPIEndpointOutput": "https://64moic5ypvhqtde4cv7snseppm.appsync-api.us-west-2.amazonaws.com/graphql",
+				"GraphQLAPIKeyOutput": "da2-eikw4f7kxreidluprrz5sbvqy4"
 			},
 			"providerMetadata": {
-				"s3TemplateURL": "https://s3.amazonaws.com/amplify-taskmaster-tasky-110536-deployment/amplify-cfn-templates/api/cloudformation-template.json",
+				"s3TemplateURL": "https://s3.amazonaws.com/amplify-taskmaster-cf-110539-deployment/amplify-cfn-templates/api/cloudformation-template.json",
 				"logicalId": "apitaskwork"
 			},
-			"lastPushTimeStamp": "2019-10-31T19:14:17.197Z",
-			"lastPushDirHash": "XT8MDpYlkAtGEs0bbCGa0LbD8eA="
+			"lastPushTimeStamp": "2019-11-01T18:09:05.422Z",
+			"lastPushDirHash": "tVS6ZmJZJS9WrrXJkf9LGtMNFgY="
 		}
 	}
 }
