@@ -14,17 +14,28 @@ import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.amazonaws.amplify.generated.graphql.ListTasksQuery;
 import com.amazonaws.mobile.config.AWSConfiguration;
 import com.amazonaws.mobileconnectors.appsync.AWSAppSyncClient;
+import com.amazonaws.mobileconnectors.appsync.fetcher.AppSyncResponseFetchers;
+import com.apollographql.apollo.GraphQLCall;
+import com.apollographql.apollo.exception.ApolloException;
 import com.google.gson.Gson;
 import org.jetbrains.annotations.NotNull;
 import java.io.IOException;
+import java.util.HashSet;
 import java.util.List;
+
+import javax.annotation.Nonnull;
+
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
+
+import static com.example.taskmaster.PostTasksToBackendServerCallback.awsAppSyncClient;
 
 public class MainActivity extends AppCompatActivity implements TaskAdapter.OnTaskInteractionListener{
 
@@ -47,16 +58,6 @@ public class MainActivity extends AppCompatActivity implements TaskAdapter.OnTas
         TextView nameTextView = findViewById(R.id.greetingTextView);
         nameTextView.setText("Hello " + username + "!"); // Strings are coded to replace this. Needs to be refactored.
 
-        // Get data from the internet
-        // Reference: https://square.github.io/okhttp/
-        OkHttpClient client = new OkHttpClient();
-
-        Request request = new Request.Builder()
-                .url("http://taskmaster-api.herokuapp.com/tasks")
-                .build();
-
-        // Callback: a function to specify what should happen after the request is done/the response is here
-        client.newCall(request).enqueue(new LogDataWhenItComesBackCallback(this));
     }
 
     // This gets called automatically when MainActivity is created/shown for the first time
@@ -70,23 +71,6 @@ public class MainActivity extends AppCompatActivity implements TaskAdapter.OnTas
                 .context(getApplicationContext())
                 .awsConfiguration(new AWSConfiguration(getApplicationContext()))
                 .build();
-
-//        // Database
-//        database = Room.databaseBuilder(getApplicationContext(), TaskMasterDatabase.class, "task")
-//                .fallbackToDestructiveMigration()
-//                .allowMainThreadQueries().build();
-//
-//        database.taskDao().nukeTable();
-
-//        // Get data from the internet
-//        // Reference: https://square.github.io/okhttp/
-//        OkHttpClient client = new OkHttpClient();
-//        Request request = new Request.Builder()
-//                .url("http://taskmaster-api.herokuapp.com/tasks")
-//                .build();
-//
-//        // Callback: a function to specify what should happen after the request is done/the response is here
-//        client.newCall(request).enqueue(new LogDataWhenItComesBackCallback(this));
 
         // Grab the add a task button
         Button addTaskButton = findViewById(R.id.addTaskButton);
@@ -123,18 +107,6 @@ public class MainActivity extends AppCompatActivity implements TaskAdapter.OnTas
 
     }
 
-    @Override
-    protected void onStart() {
-        super.onStart();
-
-        OkHttpClient client = new OkHttpClient();
-        Request request = new Request.Builder()
-                .url("http://taskmaster-api.herokuapp.com/tasks")
-                .build();
-
-        client.newCall(request).enqueue(new LogDataWhenItComesBackCallback(this));
-    }
-
     public void taskSelected(Task task) {
         Intent goToTaskDetailsPageActivityIntent = new Intent(this, TaskDetails.class);
 
@@ -147,9 +119,36 @@ public class MainActivity extends AppCompatActivity implements TaskAdapter.OnTas
 
     public static final String taskTitle = "taskTitle";
 
+    public void putDataOnPage(String data){
+
+        // Turn JSON into InternetTasks
+        Gson gson = new Gson();
+        InternetTask[] incomingArray = gson.fromJson(data, InternetTask[].class);
+
+        //Getting a set of existing titles
+        HashSet<String> titles = new HashSet<>();
+
+        for(Task task : this.tasks){
+            titles.add(task.getTitle());
+        }
+
+        for(InternetTask internetTask: incomingArray){
+            //if the title is a new title then add it
+            if(!titles.contains(internetTask.getTitle())){
+                titles.add(internetTask.getTitle());
+                Task newTask = new Task(internetTask);
+                tasks.add(newTask);
+                database.taskDao().addTask(newTask);
+            }
+        }
+        
+        taskAdapter.notifyDataSetChanged();
+
+    }
+
 }
 
-class LogDataWhenItComesBackCallback implements Callback {
+abstract class LogDataWhenItComesBackCallback implements Callback {
 
     MainActivity mainActivityInstance;
 
@@ -159,52 +158,30 @@ class LogDataWhenItComesBackCallback implements Callback {
 
     private static final String TAG = "fisher.Callback";
 
-    // OkHttp will call this if the request fails
-
-    @Override
-    public void onFailure(@NotNull Call call, @NotNull IOException error) {
-        Log.e(TAG, "Internet error");
-        Log.e(TAG, error.getMessage());
+    public void runQuery(){
+        awsAppSyncClient.query(ListTasksQuery.builder().build())
+                .responseFetcher(AppSyncResponseFetchers.CACHE_AND_NETWORK)
+                .enqueue(tasksCallback);
     }
 
-    // OkHttp will call this if the request succeeds
-
-    @Override
-    public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
-        String responseBody = response.body().string();
-        Log.i(TAG, responseBody);
-
-        // Turning JSON into InternetTasks
-        Gson gson = new Gson();
-        Task[] incomingAPITaskArray = gson.fromJson(responseBody, Task[].class);
-
-        // Defining a class that extends Handler with the curly braces
-        Handler handlerForMainThread = new Handler(Looper.getMainLooper()) {
-            @Override
-            public void handleMessage(Message inputMessage) {
-
-                Task[] listOfTasks = (Task[]) inputMessage.obj;
-
-                for (Task task : listOfTasks) {
-
-                    task.setCloudId(task.getId());
-                    task.setId(0);
-
-                    if (mainActivityInstance.database.taskDao().getTasksByTitleAndBody(task.getTitle(), task.getBody()) == null) {
-                        mainActivityInstance.database.taskDao().addTask(task);
-                    }
+    private GraphQLCall.Callback<ListTasksQuery.Data> tasksCallback = new GraphQLCall.Callback<ListTasksQuery.Data>() {
+        @Override
+        public void onResponse(@Nonnull com.apollographql.apollo.api.Response<ListTasksQuery.Data> response) {
+            Log.i("Results", response.data().listTasks().items().toString());
+            Handler handlerForMainThread = new Handler(Looper.getMainLooper()) {
+                @Override
+                public void handleMessage(Message inputMessageToMain){
+                    mainActivityInstance.putDataOnPage((String)inputMessageToMain.obj);
                 }
+            };
+            Message completeMessage = handlerForMainThread.obtainMessage(0, response);
+            completeMessage.sendToTarget();
+        }
 
-                mainActivityInstance.tasks = mainActivityInstance.database.taskDao().getAll();
-                mainActivityInstance.recyclerView = mainActivityInstance.findViewById(R.id.mainRecyclerView);
-                mainActivityInstance.recyclerView.setLayoutManager(new LinearLayoutManager(mainActivityInstance));
-                mainActivityInstance.recyclerView.setAdapter(new TaskAdapter(mainActivityInstance.tasks, mainActivityInstance));
+        @Override
+        public void onFailure(@Nonnull ApolloException error) {
+            Log.e("ERROR", error.toString());
+        }
+    };
 
-            }
-        };
-
-        Message completeMessage =
-                handlerForMainThread.obtainMessage(0, incomingAPITaskArray);
-        completeMessage.sendToTarget();
-    }
 }

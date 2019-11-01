@@ -29,7 +29,6 @@ import okhttp3.Callback;
 import okhttp3.Response;
 import type.CreateTaskInput;
 import type.TaskState;
-
 import static android.widget.Toast.*;
 import static androidx.constraintlayout.widget.Constraints.TAG;
 import static com.example.taskmaster.R.string.submit_confirmation;
@@ -63,10 +62,6 @@ public class AddATask extends AppCompatActivity {
             Task newTask = new Task(title, body);
             SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
             String username = preferences.getString("username", "user");
-//            newTask.setAssignedUser(username);
-
-//            database = Room.databaseBuilder(getApplicationContext(), TaskMasterDatabase.class, "task").allowMainThreadQueries().build();
-//            database.taskDao().addTask(newTask);
 
             // Hide keyboard once the Add Button is clicked
             InputMethodManager inputManager = (InputMethodManager)
@@ -81,24 +76,12 @@ public class AddATask extends AppCompatActivity {
         });
     }
 
-    public void showSubmittedMessage(View view) {
+    public void showSubmittedMessageInRecyclerView(View view) {
 
         String taskTitle = findViewById(R.id.taskTitleInput).toString();
         String taskDescription = findViewById(R.id.taskDescriptionInput).toString();
 
         PostTasksToBackendServerCallback.runAddATaskMutation(inputTaskTitle.getText().toString(), inputTaskDescription.getText().toString(), "NEW");
-
-//        OkHttpClient client = new OkHttpClient();
-//        RequestBody requestBody = new FormBody.Builder()
-//                .add("title", taskTitle)
-//                .add("body", taskDescription)
-//                .build();
-//        Request request = new Request.Builder()
-//                .url("http://taskmaster-api.herokuapp.com/tasks")
-//                .post(requestBody)
-//                .build();
-//
-//        client.newCall(request).enqueue(new PostTasksToBackendServerCallback(this));
 
         Task newTask = new Task(taskTitle, taskDescription);
         database.taskDao().addTask(newTask);
@@ -154,22 +137,12 @@ class PostTasksToBackendServerCallback implements Callback {
     public static GraphQLCall.Callback<CreateTaskMutation.Data> addTaskCallBack = new GraphQLCall.Callback<CreateTaskMutation.Data>() {
         @Override
         public void onResponse(@Nonnull com.apollographql.apollo.api.Response<CreateTaskMutation.Data> response) {
-
-            Handler handlerForMainThread = new Handler(Looper.getMainLooper()) {
-                @Override
-                public void handleMessage(Message inputMessage) {
-                    Toast toast = makeText(R.string.submit_confirmation, Toast.LENGTH_LONG);
-                    toast.show();
-                }
-            };
-
-            Message completeMessage = handlerForMainThread.obtainMessage(0);
-            completeMessage.sendToTarget();
+            Log.i("Results", "Added Task");
         }
 
         @Override
-        public void onFailure(@Nonnull ApolloException e) {
-            Log.e(TAG, e.getMessage());
+        public void onFailure(@Nonnull ApolloException error) {
+            Log.e(TAG, error.getMessage());
         }
     };
 }
