@@ -135,13 +135,12 @@ public class MainActivity extends AppCompatActivity implements TaskAdapter.OnTas
         for(InternetTask internetTask: incomingArray){
             //if the title is a new title then add it
             if(!titles.contains(internetTask.getTitle())){
-                titles.add(internetTask.getTitle());
-                Task newTask = new Task(internetTask);
-                tasks.add(newTask);
+                Task newTask = new Task(internetTask.getTitle(), internetTask.getBody());
+                titles.add(newTask);
                 database.taskDao().addTask(newTask);
             }
         }
-        
+
         taskAdapter.notifyDataSetChanged();
 
     }
