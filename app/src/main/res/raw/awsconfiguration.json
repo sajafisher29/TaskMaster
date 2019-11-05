@@ -12,5 +12,21 @@
             "ApiKey": "da2-eikw4f7kxreidluprrz5sbvqy4",
             "ClientDatabasePrefix": "taskwork_API_KEY"
         }
+    },
+    "CredentialsProvider": {
+        "CognitoIdentity": {
+            "Default": {
+                "PoolId": "us-west-2:16544685-a0a6-4126-a31c-90c8fc15c72e",
+                "Region": "us-west-2"
+            }
+        }
+    },
+    "CognitoUserPool": {
+        "Default": {
+            "PoolId": "us-west-2_4KnIYWMPP",
+            "AppClientId": "2tlip750t2e4qublh648b3pmp",
+            "AppClientSecret": "4aeqa6jaoah59oroothqkfg9p2vqo39onb7gbpjatejms8cno09",
+            "Region": "us-west-2"
+        }
     }
 }
