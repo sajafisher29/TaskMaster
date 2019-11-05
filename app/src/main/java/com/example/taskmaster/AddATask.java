@@ -40,7 +40,7 @@ public class AddATask extends AppCompatActivity {
     public TaskMasterDatabase database;
     private EditText inputTaskTitle;
     private EditText inputTaskDescription;
-    AWSAppSyncClient awsAppSyncClient;
+    static AWSAppSyncClient awsAppSyncClient;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,6 +54,7 @@ public class AddATask extends AppCompatActivity {
 
         Button addTask = findViewById(R.id.addTaskButton);
         addTask.setOnClickListener((event) -> {
+            Log.i("Results", "yo");
 
             TextView titleTextView = findViewById(R.id.taskTitleInput);
             String title = titleTextView.getText().toString();
@@ -95,7 +96,7 @@ public class AddATask extends AppCompatActivity {
 class PostTasksToBackendServerCallback implements Callback {
 
     AddATask addTaskActivity;
-    static AWSAppSyncClient awsAppSyncClient;
+//    static AWSAppSyncClient awsAppSyncClient;
 
     public PostTasksToBackendServerCallback(AddATask addTaskActivity) {
         this.addTaskActivity = addTaskActivity;
@@ -124,12 +125,13 @@ class PostTasksToBackendServerCallback implements Callback {
 
     // Insert a new task
     public static void runAddATaskMutation(String title, String description, String state) {
+        Log.i("Results", "begin mutation");
         CreateTaskInput createTaskInput = CreateTaskInput.builder()
                 .name(title)
                 .description(description)
                 .taskState(TaskState.valueOf(state))
                 .build();
-        awsAppSyncClient.mutate(CreateTaskMutation.builder().input(createTaskInput).build())
+        AddATask.awsAppSyncClient.mutate(CreateTaskMutation.builder().input(createTaskInput).build())
                 .enqueue(addTaskCallBack);
     }
 
@@ -142,7 +144,7 @@ class PostTasksToBackendServerCallback implements Callback {
 
         @Override
         public void onFailure(@Nonnull ApolloException error) {
-            Log.e(TAG, error.getMessage());
+            Log.e("Results", error.getMessage());
         }
     };
 }
