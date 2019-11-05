@@ -14,28 +14,16 @@ import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
 import com.amazonaws.amplify.generated.graphql.ListTasksQuery;
 import com.amazonaws.mobile.config.AWSConfiguration;
 import com.amazonaws.mobileconnectors.appsync.AWSAppSyncClient;
 import com.amazonaws.mobileconnectors.appsync.fetcher.AppSyncResponseFetchers;
 import com.apollographql.apollo.GraphQLCall;
 import com.apollographql.apollo.exception.ApolloException;
-import com.google.gson.Gson;
-import org.jetbrains.annotations.NotNull;
-import java.io.IOException;
-import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
-
 import javax.annotation.Nonnull;
-
-import okhttp3.Call;
 import okhttp3.Callback;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.Response;
-
-import static com.example.taskmaster.PostTasksToBackendServerCallback.awsAppSyncClient;
 
 public class MainActivity extends AppCompatActivity implements TaskAdapter.OnTaskInteractionListener{
 
@@ -58,13 +46,58 @@ public class MainActivity extends AppCompatActivity implements TaskAdapter.OnTas
         TextView nameTextView = findViewById(R.id.greetingTextView);
         nameTextView.setText("Hello " + username + "!"); // Strings are coded to replace this. Needs to be refactored.
 
+        runQuery();
     }
+
+    public void runQuery(){
+        awsAppSyncClient.query(ListTasksQuery.builder().build())
+                .responseFetcher(AppSyncResponseFetchers.NETWORK_ONLY)
+                .enqueue(tasksCallback);
+    }
+
+    private GraphQLCall.Callback<ListTasksQuery.Data> tasksCallback = new GraphQLCall.Callback<ListTasksQuery.Data>() {
+        @Override
+        public void onResponse(@Nonnull com.apollographql.apollo.api.Response<ListTasksQuery.Data> response) {
+            Log.i("Results", response.data().listTasks().items().toString());
+            Handler handlerForMainThread = new Handler(Looper.getMainLooper()) {
+                @Override
+                public void handleMessage(Message inputMessageToMain){
+                    ListTasksQuery.Data tasksQuery = response.data();
+                    Log.i("Results", "handing response");
+                    // Take items and turn them into tasks
+                    tasks.clear();
+                    for(ListTasksQuery.Data data : tasks) {
+                        tasks.add(new Task(task));
+                    }
+                    // Feed tasks to taskArray
+
+                    // Notify adapter of updated data
+
+                }
+            };
+            Message completeMessage = handlerForMainThread.obtainMessage(0, response);
+            completeMessage.sendToTarget();
+        }
+
+        @Override
+        public void onFailure(@Nonnull ApolloException error) {
+            Log.e("ERROR", error.toString());
+        }
+    };
 
     // This gets called automatically when MainActivity is created/shown for the first time
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        tasks = new LinkedList<Task>();
+
+        // Set up RecyclerView
+        recyclerView = findViewById(R.id.mainRecyclerView);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        taskAdapter = new TaskAdapter(tasks, this);
+        recyclerView.setAdapter(taskAdapter);
 
         // Connect to AWS
         awsAppSyncClient = AWSAppSyncClient.builder()
@@ -119,31 +152,31 @@ public class MainActivity extends AppCompatActivity implements TaskAdapter.OnTas
 
     public static final String taskTitle = "taskTitle";
 
-    public void putDataOnPage(String data){
-
-        // Turn JSON into InternetTasks
-        Gson gson = new Gson();
-        InternetTask[] incomingArray = gson.fromJson(data, InternetTask[].class);
-
-        //Getting a set of existing titles
-        HashSet<String> titles = new HashSet<>();
-
-        for(Task task : this.tasks){
-            titles.add(task.getTitle());
-        }
-
-        for(InternetTask internetTask: incomingArray){
-            //if the title is a new title then add it
-            if(!titles.contains(internetTask.getTitle())){
-                Task newTask = new Task(internetTask.getTitle(), internetTask.getBody());
-                titles.add(newTask);
-                database.taskDao().addTask(newTask);
-            }
-        }
-
-        taskAdapter.notifyDataSetChanged();
-
-    }
+//    public void putDataOnPage(String data){
+//
+//        // Turn JSON into InternetTasks
+//        Gson gson = new Gson();
+//        InternetTask[] incomingArray = gson.fromJson(data, InternetTask[].class);
+//
+//        //Getting a set of existing titles
+//        HashSet<String> titles = new HashSet<>();
+//
+//        for(Task task : this.tasks){
+//            titles.add(task.getTitle());
+//        }
+//
+//        for(InternetTask internetTask: incomingArray){
+//            //if the title is a new title then add it
+//            if(!titles.contains(internetTask.getTitle())){
+//                Task newTask = new Task(internetTask.getTitle(), internetTask.getBody());
+////                titles.add(newTask);
+//                database.taskDao().addTask(newTask);
+//            }
+//        }
+//
+//        taskAdapter.notifyDataSetChanged();
+//
+//    }
 
 }
 
@@ -156,31 +189,5 @@ abstract class LogDataWhenItComesBackCallback implements Callback {
     }
 
     private static final String TAG = "fisher.Callback";
-
-    public void runQuery(){
-        awsAppSyncClient.query(ListTasksQuery.builder().build())
-                .responseFetcher(AppSyncResponseFetchers.CACHE_AND_NETWORK)
-                .enqueue(tasksCallback);
-    }
-
-    private GraphQLCall.Callback<ListTasksQuery.Data> tasksCallback = new GraphQLCall.Callback<ListTasksQuery.Data>() {
-        @Override
-        public void onResponse(@Nonnull com.apollographql.apollo.api.Response<ListTasksQuery.Data> response) {
-            Log.i("Results", response.data().listTasks().items().toString());
-            Handler handlerForMainThread = new Handler(Looper.getMainLooper()) {
-                @Override
-                public void handleMessage(Message inputMessageToMain){
-                    mainActivityInstance.putDataOnPage((String)inputMessageToMain.obj);
-                }
-            };
-            Message completeMessage = handlerForMainThread.obtainMessage(0, response);
-            completeMessage.sendToTarget();
-        }
-
-        @Override
-        public void onFailure(@Nonnull ApolloException error) {
-            Log.e("ERROR", error.toString());
-        }
-    };
 
 }
