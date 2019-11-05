@@ -17,8 +17,7 @@
         android:textSize="30sp"
         app:layout_constraintBottom_toTopOf="@+id/mainRecyclerView"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintStart_toStartOf="parent" />
 
     <Button
         android:id="@+id/addTaskButton"
@@ -60,20 +59,19 @@
         android:id="@+id/greetingTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="15dp"
         android:text="@string/Hello"
         app:layout_constraintBottom_toTopOf="@+id/homePageHeader"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.85"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.0" />
+        app:layout_constraintTop_toBottomOf="@+id/signInButton" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/mainRecyclerView"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:background="#8BC34A"
-        app:layout_constraintBottom_toTopOf="@+id/dataTextView"
+        app:layout_constraintDimensionRatio="1:1"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/homePageHeader" />
@@ -87,5 +85,25 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/mainRecyclerView" />
+
+    <Button
+        android:id="@+id/signInButton"
+        android:layout_width="66dp"
+        android:layout_height="30dp"
+        android:text="@string/sign_in_button"
+        app:layout_constraintBottom_toTopOf="@id/greetingTextView"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/signOutButton"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/signOutButton"
+        android:layout_width="56dp"
+        android:layout_height="31dp"
+        android:text="@string/sign_out_button"
+        app:layout_constraintBottom_toTopOf="@+id/greetingTextView"
+        app:layout_constraintEnd_toStartOf="@+id/signInButton"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
