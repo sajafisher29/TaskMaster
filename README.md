@@ -4,7 +4,7 @@
 We are building a TaskMaster App!
 
 ## Change Log
-### Monday
+### Day 1
 * Build main page to match [wireframe](https://codefellows.github.io/code-401-java-guide/curriculum/class-26/taskmaster_homepage.png)
 * Include heading at top of page, an image placeholder for the "my tasks" view, and buttons at the bottom to route to "add tasks" and "all tasks" pages
 * [Build "Add a Task" page](https://codefellows.github.io/code-401-java-guide/curriculum/class-26/taskmaster_add_task.png)
@@ -21,7 +21,7 @@ We are building a TaskMaster App!
 ![Add Task page with Toast](screenshots/MondayAddTaskPageWithToast.PNG)  
 ![All Tasks page](screenshots/MondayAllTasksPage.PNG)  
 
-### Tuesday
+### Day 2
 * Create a Settings page. It should allow users to enter their username and hit save.
 * Modify the main page to contain three different buttons with hardcoded task titles. 
 * When a user taps one of the titles, it should go to the Task Detail page, and the title at the top of the page should match the task title that was tapped on the previous page.
@@ -29,9 +29,8 @@ We are building a TaskMaster App!
 * Update homepage screenshot and add a screenshot of Task Detail page.
 * Build unit tests for any testable code at this point
 * Stretch goal: Allow the user to specify on their settings page how many tasks should be shown on the homepage. Use this to dynamically create buttons for as many tasks as the user requests.
-#### Screenshots
 
-### Wednesday
+### Day 3
 * Refactor homepage with a RecyclerView holding Task data
 * Create a task class. A task should include a title, body, and a state. The state should be one of "new", "assigned", "in progress", or "complete".
 * Create a ViewAdapter class that displays data from a list of Tasks.
@@ -41,13 +40,33 @@ We are building a TaskMaster App!
 * Create Espresso tests
 * Stretch goal: Allow the user to specify on their settings page how many tasks should be shown on the homepage. Use this to dynamically create as many tasks as the user requests for display in the RecyclerView.
 * Stretch goal: Display the description of the correct task instead of the Lorem Ipsum text on the task detail page.
-#### Screenshots
 
-### Thursday
-#### Screenshots
+### Day 4
+* Refactor model layer to store Task data in a local database
+* Set up Room
+* Modify Task Class to be an Entity
+* Modity Add Task form to save data entered as a Task in local database
+* Refactor homepage's RecyclerView to display all Task entities in database
+* Ensure title, description, and status of selected task are displayed on the details page
+* Use Espresso to test relevant functionality of application
+* Stretch goal: Allow the user to specify on their settings page how many tasks should be shown on the homepage. Use this to dynamically display as many tasks as the user requests for display in the RecyclerView.
+* Allow the user to specify on their settings page how the tasks should be sorted (by title, status, or creation time).
 
-### Friday
-#### Screenshots
+### Day 5
+* Refactor model layer to store Task data on a remote server and use the data to cache data locally
+* Modify Add Task form to post the entered task data to the server
+* Ensure homepage refreshes the tasks shown after a task has been added
+* Stretch goal: Allow the user to specify on their settings page how many tasks should be shown on the homepage. Use this to dynamically display as many tasks as the user requests for display in the RecyclerView.
+* Stretch goal: Allow the user to specify on their settings page how the tasks should be sorted (by title, status, or creation time).
+Stretch goal: Allow the user to delete a task from the task detail page. Delete that task both on the server and locally.
+
+### Day 6
+* Build a scalable backend with AWS Amplify
+* Create an AWS account and install Amplify CLI, follow Amplify Getting Started directions to set up application
+* Using the amplify add api command, create a Task resource that replicates existing Task schema. Update all references to the Task data to instead use AWS Amplify to access data in DynamoDB instead of in Room
+* Modify Add Task form to save data entered in as a Task to DynamoDB
+* Refactor homepage's RecyclerView to display all Task entities in DynamoDB
+* Stretch goal: Cache data fetched from DynamoDB into local Room database
 
 ## Resources 
 * [Android Buttons](https://developer.android.com/guide/topics/ui/controls/button.html)
@@ -56,4 +75,6 @@ We are building a TaskMaster App!
 * [Android SharedPreferences](https://developer.android.com/training/data-storage/shared-preferences)
 * [The Activity Lifecycle](https://developer.android.com/guide/components/activities/activity-lifecycle)
 * [RecyclerView](https://developer.android.com/guide/topics/ui/layout/recyclerview#java)
-* []
+* [Saving Data in local database with Room](https://developer.android.com/training/data-storage/room)
+* [OkHttp](https://square.github.io/okhttp/)
+* [Amplify Getting Started](https://aws-amplify.github.io/docs/)

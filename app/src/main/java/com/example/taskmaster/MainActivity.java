@@ -132,10 +132,6 @@ public class MainActivity extends AppCompatActivity implements TaskAdapter.OnTas
             taskAdapter = new TaskAdapter(tasks, this);
             recyclerView.setAdapter(taskAdapter);
 
-
-
-
-
             Button signInButton = findViewById(R.id.signInButton);
             signInButton.setOnClickListener((event) -> {
                 // Add the sign in
@@ -151,6 +147,11 @@ public class MainActivity extends AppCompatActivity implements TaskAdapter.OnTas
                         Log.e(TAG, "onError: ", error);
                     }
                 });
+            });
+
+            Button signOutButton = findViewById(R.id.signOutButton);
+            signOutButton.setOnClickListener((event) -> {
+                AWSMobileClient.getInstance().signOut();
             });
 
         // Grab the add a task button
@@ -199,8 +200,6 @@ public class MainActivity extends AppCompatActivity implements TaskAdapter.OnTas
             Log.i(TAG, "inside taskSelected trying to move to Task Title " + task.getTitle());
             MainActivity.this.startActivity(goToTaskDetailsPageActivityIntent);
         }
-
-        public static final String taskTitle = "taskTitle";
 
     }
 
