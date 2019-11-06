@@ -68,6 +68,15 @@ Stretch goal: Allow the user to delete a task from the task detail page. Delete 
 * Refactor homepage's RecyclerView to display all Task entities in DynamoDB
 * Stretch goal: Cache data fetched from DynamoDB into local Room database
 
+### Day 7
+* Add second resource on backend, consumed by frontend
+* Create a second entity for a team, which has a name and a list of tasks. Update tasks to be owned by a team
+* Manually create three teams by running a mutation exactly three times
+* Modify Add Task form to include either a Spinner or Radio buttons for which team that tasks belongs to
+* In addition to a username, allow the user to choose their team on the Settings page. Use that Team to display only that team's tasks on the homepage
+* Add Espresso tests for the team entity and functionality
+* Stretch goal: Cache data fetched from DynamoDB into local Room database
+
 ## Resources 
 * [Android Buttons](https://developer.android.com/guide/topics/ui/controls/button.html)
 * [Android UI Events](https://developer.android.com/guide/topics/ui/ui-events.html)
