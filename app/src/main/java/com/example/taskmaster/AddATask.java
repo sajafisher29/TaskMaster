@@ -1,25 +1,16 @@
 package com.example.taskmaster;
 
 import androidx.appcompat.app.AppCompatActivity;
-import android.content.Context;
-import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
-import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.View;
-import android.view.inputmethod.InputMethodManager;
-import android.widget.Adapter;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
-import android.widget.TextView;
-import android.widget.Toast;
 import com.amazonaws.amplify.generated.graphql.CreateTaskMutation;
 import com.amazonaws.amplify.generated.graphql.ListTeamsQuery;
 import com.amazonaws.mobile.config.AWSConfiguration;
@@ -27,21 +18,10 @@ import com.amazonaws.mobileconnectors.appsync.AWSAppSyncClient;
 import com.amazonaws.mobileconnectors.appsync.fetcher.AppSyncResponseFetchers;
 import com.apollographql.apollo.GraphQLCall;
 import com.apollographql.apollo.exception.ApolloException;
-import org.jetbrains.annotations.NotNull;
-import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
-
 import javax.annotation.Nonnull;
-import okhttp3.Call;
-import okhttp3.Callback;
-import okhttp3.Response;
 import type.CreateTaskInput;
-import type.CreateTeamInput;
-import type.TaskState;
-import static android.widget.Toast.*;
-import static androidx.constraintlayout.widget.Constraints.TAG;
-import static com.example.taskmaster.R.string.submit_confirmation;
 
 public class AddATask extends AppCompatActivity implements AdapterView.OnItemSelectedListener{
 

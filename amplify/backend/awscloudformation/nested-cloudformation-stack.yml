@@ -129,6 +129,40 @@
 				}
 			}
 		},
+		"storagemedia": {
+			"Type": "AWS::CloudFormation::Stack",
+			"Properties": {
+				"TemplateURL": "https://s3.amazonaws.com/amplify-taskmaster-cf-110539-deployment/amplify-cfn-templates/storage/s3-cloudformation-template.json",
+				"Parameters": {
+					"bucketName": "taskmastermedia",
+					"authPolicyName": "s3_amplify_06ef0719",
+					"unauthPolicyName": "s3_amplify_06ef0719",
+					"authRoleName": {
+						"Ref": "AuthRoleName"
+					},
+					"unauthRoleName": {
+						"Ref": "UnauthRoleName"
+					},
+					"selectedGuestPermissions": "s3:GetObject,s3:ListBucket",
+					"selectedAuthenticatedPermissions": "",
+					"s3PermissionsAuthenticatedPublic": "DISALLOW",
+					"s3PublicPolicy": "Public_policy_fdf04e02",
+					"s3PermissionsAuthenticatedUploads": "DISALLOW",
+					"s3UploadsPolicy": "Uploads_policy_fdf04e02",
+					"s3PermissionsAuthenticatedProtected": "DISALLOW",
+					"s3ProtectedPolicy": "Protected_policy_fdf04e02",
+					"s3PermissionsAuthenticatedPrivate": "DISALLOW",
+					"s3PrivatePolicy": "Private_policy_fdf04e02",
+					"AuthenticatedAllowList": "DISALLOW",
+					"s3ReadPolicy": "read_policy_fdf04e02",
+					"s3PermissionsGuestPublic": "DISALLOW",
+					"s3PermissionsGuestUploads": "DISALLOW",
+					"GuestAllowList": "DISALLOW",
+					"triggerFunction": "NONE",
+					"env": "cf"
+				}
+			}
+		},
 		"UpdateRolesWithIDPFunction": {
 			"DependsOn": [
 				"AuthRole",

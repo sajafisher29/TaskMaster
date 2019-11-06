@@ -34,7 +34,7 @@
 				"s3TemplateURL": "https://s3.amazonaws.com/amplify-taskmaster-cf-110539-deployment/amplify-cfn-templates/api/cloudformation-template.json",
 				"logicalId": "apitaskwork"
 			},
-			"lastPushTimeStamp": "2019-11-06T19:09:53.418Z",
+			"lastPushTimeStamp": "2019-11-06T23:16:53.657Z",
 			"lastPushDirHash": "TB4g7jfzfWwi+am7Our6Lbp1Tfg="
 		}
 	},
@@ -47,7 +47,7 @@
 				"s3TemplateURL": "https://s3.amazonaws.com/amplify-taskmaster-cf-110539-deployment/amplify-cfn-templates/auth/taskmastercfa10f98-cloudformation-template.yml",
 				"logicalId": "authtaskmastercfa10f98"
 			},
-			"lastPushTimeStamp": "2019-11-06T19:09:52.116Z",
+			"lastPushTimeStamp": "2019-11-06T23:16:53.659Z",
 			"output": {
 				"AppClientSecret": "4aeqa6jaoah59oroothqkfg9p2vqo39onb7gbpjatejms8cno09",
 				"UserPoolId": "us-west-2_4KnIYWMPP",
@@ -58,6 +58,22 @@
 				"UserPoolName": "taskmastercfa10f98_userpool_cfa10f98"
 			},
 			"lastPushDirHash": "S8wkNwDmlc5LUoU8tz/4pu5vOqc="
+		}
+	},
+	"storage": {
+		"media": {
+			"service": "S3",
+			"providerPlugin": "awscloudformation",
+			"providerMetadata": {
+				"s3TemplateURL": "https://s3.amazonaws.com/amplify-taskmaster-cf-110539-deployment/amplify-cfn-templates/storage/s3-cloudformation-template.json",
+				"logicalId": "storagemedia"
+			},
+			"lastPushTimeStamp": "2019-11-06T23:16:53.662Z",
+			"output": {
+				"BucketName": "taskmastermedia-cf",
+				"Region": "us-west-2"
+			},
+			"lastPushDirHash": "evEkuY/b9zErBDBC7orNMkyGGRQ="
 		}
 	}
 }
