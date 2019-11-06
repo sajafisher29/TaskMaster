@@ -28,5 +28,11 @@
             "AppClientSecret": "4aeqa6jaoah59oroothqkfg9p2vqo39onb7gbpjatejms8cno09",
             "Region": "us-west-2"
         }
+    },
+    "S3TransferUtility": {
+        "Default": {
+            "Bucket": "taskmastermedia-cf",
+            "Region": "us-west-2"
+        }
     }
 }

@@ -2,16 +2,19 @@ package com.example.taskmaster;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
+import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.amazonaws.amplify.generated.graphql.ListTasksQuery;
@@ -22,17 +25,26 @@ import com.amazonaws.mobile.client.SignInUIOptions;
 import com.amazonaws.mobile.client.UserStateDetails;
 import com.amazonaws.mobile.config.AWSConfiguration;
 import com.amazonaws.mobileconnectors.appsync.AWSAppSyncClient;
-import com.amazonaws.mobileconnectors.appsync.AppSyncSubscriptionCall;
 import com.amazonaws.mobileconnectors.appsync.fetcher.AppSyncResponseFetchers;
+import com.amazonaws.mobileconnectors.s3.transferutility.TransferListener;
+import com.amazonaws.mobileconnectors.s3.transferutility.TransferObserver;
+import com.amazonaws.mobileconnectors.s3.transferutility.TransferService;
+import com.amazonaws.mobileconnectors.s3.transferutility.TransferState;
+import com.amazonaws.mobileconnectors.s3.transferutility.TransferUtility;
+import com.amazonaws.services.s3.AmazonS3Client;
 import com.apollographql.apollo.GraphQLCall;
 import com.apollographql.apollo.api.Response;
 import com.apollographql.apollo.exception.ApolloException;
+
+import java.io.File;
 import java.util.LinkedList;
 import java.util.List;
 import javax.annotation.Nonnull;
 import okhttp3.Callback;
 
-public class MainActivity extends AppCompatActivity implements TaskAdapter.OnTaskInteractionListener{
+import static android.Manifest.permission.READ_EXTERNAL_STORAGE;
+
+public class MainActivity extends AppCompatActivity implements TaskAdapter.OnTaskInteractionListener {
 
     private static final String TAG = "fisher.MainActivity";
 
@@ -68,7 +80,7 @@ public class MainActivity extends AppCompatActivity implements TaskAdapter.OnTas
         startActivity(taskDetailIntent);
     }
 
-    public void runQueryForAllTeams(){
+    public void runQueryForAllTeams() {
         awsAppSyncClient.query(ListTasksQuery.builder().build())
                 .responseFetcher(AppSyncResponseFetchers.NETWORK_ONLY)
                 .enqueue(getAllTasksCallback);
@@ -80,7 +92,7 @@ public class MainActivity extends AppCompatActivity implements TaskAdapter.OnTas
             Log.i("Results", response.data().listTasks().items().toString());
             Handler handlerForMainThread = new Handler(Looper.getMainLooper()) {
                 @Override
-                public void handleMessage(Message inputMessageToMain){
+                public void handleMessage(Message inputMessageToMain) {
 
                     List<ListTasksQuery.Item> items = response.data().listTasks().items();
                     tasks.clear();
@@ -92,10 +104,12 @@ public class MainActivity extends AppCompatActivity implements TaskAdapter.OnTas
             };
             Message completeMessage = handlerForMainThread.obtainMessage(0, response);
             completeMessage.sendToTarget();
-        };
+        }
+
+        ;
 
         @Override
-        public void onFailure (@Nonnull ApolloException error){
+        public void onFailure(@Nonnull ApolloException error) {
             Log.e("ERROR", error.toString());
         }
     };
@@ -107,6 +121,11 @@ public class MainActivity extends AppCompatActivity implements TaskAdapter.OnTas
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        String[] permissions = {READ_EXTERNAL_STORAGE};
+
+        getApplicationContext().startService(new Intent(getApplicationContext(), TransferService.class));
+        ActivityCompat.requestPermissions(this, permissions, 1);
+
         // Initialize AWS' Mobile Client to check on log in/out status
         AWSMobileClient.getInstance().initialize(getApplicationContext(), new com.amazonaws.mobile.client.Callback<UserStateDetails>() {
             @Override
@@ -114,18 +133,18 @@ public class MainActivity extends AppCompatActivity implements TaskAdapter.OnTas
                 Log.i("INIT", "onResult: " + result.getUserState().toString());
                 if (result.getUserState().toString().equals("SIGN_OUT")) {
                     AWSMobileClient.getInstance().showSignIn(MainActivity.this,
-                        SignInUIOptions.builder().logo(R.drawable.leaftaskmasterapp).build(),
-                        new com.amazonaws.mobile.client.Callback<UserStateDetails>() {
-                            @Override
-                            public void onResult(UserStateDetails result) {
+                            SignInUIOptions.builder().logo(R.drawable.leaftaskmasterapp).build(),
+                            new com.amazonaws.mobile.client.Callback<UserStateDetails>() {
+                                @Override
+                                public void onResult(UserStateDetails result) {
 //                                signInUser();
-                            }
+                                }
 
-                            @Override
-                            public void onError(Exception error) {
-                                Log.e("error_signing_in", error.getMessage());
-                            }
-                        });
+                                @Override
+                                public void onError(Exception error) {
+                                    Log.e("error_signing_in", error.getMessage());
+                                }
+                            });
                 }
             }
 
@@ -183,52 +202,50 @@ public class MainActivity extends AppCompatActivity implements TaskAdapter.OnTas
 //            }
 //        });
 
-    // Grab the add a task button
-    Button addTaskButton = findViewById(R.id.addTaskButton);
-    // Add an event listener
+        // Grab the add a task button
+        Button addTaskButton = findViewById(R.id.addTaskButton);
+        // Add an event listener
         addTaskButton.setOnClickListener(new View.OnClickListener() {
-             @Override
-             public void onClick(View event) {
-                 Intent goToAddATaskActivityIntent = new Intent(MainActivity.this, AddATask.class);
-                 MainActivity.this.startActivity(goToAddATaskActivityIntent);
-             }
+            @Override
+            public void onClick(View event) {
+                Intent goToAddATaskActivityIntent = new Intent(MainActivity.this, AddATask.class);
+                MainActivity.this.startActivity(goToAddATaskActivityIntent);
+            }
         });
 
-    // Grab the all tasks button
-    Button allTasksButton = findViewById(R.id.allTasksButton);
-    // Add an event listener
+        // Grab the all tasks button
+        Button allTasksButton = findViewById(R.id.allTasksButton);
+        // Add an event listener
         allTasksButton.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick (View event){
-            Intent goToAllTasksActivityIntent = new Intent(MainActivity.this, AllTasks.class);
-            MainActivity.this.startActivity(goToAllTasksActivityIntent);
-    }
+            public void onClick(View event) {
+                Intent goToAllTasksActivityIntent = new Intent(MainActivity.this, AllTasks.class);
+                MainActivity.this.startActivity(goToAllTasksActivityIntent);
+            }
         });
 
-    // Grab the settings button
-    Button settingsButton = findViewById(R.id.settingsPageButton);
-    // Add an event listener
-        settingsButton.setOnClickListener(new View.OnClickListener()
+        // Grab the settings button
+        Button settingsButton = findViewById(R.id.settingsPageButton);
+        // Add an event listener
+        settingsButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View event) {
+                Intent goToSettingsActivityIntent = new Intent(MainActivity.this, Settings.class);
+                MainActivity.this.startActivity(goToSettingsActivityIntent);
+            }
+        });
 
-    {
-        @Override
-        public void onClick (View event){
-        Intent goToSettingsActivityIntent = new Intent(MainActivity.this, Settings.class);
-        MainActivity.this.startActivity(goToSettingsActivityIntent);
     }
-    });
 
-}
+    public void taskSelected(Task task) {
+        Intent goToTaskDetailsPageActivityIntent = new Intent(this, TaskDetails.class);
 
-        public void taskSelected(Task task) {
-            Intent goToTaskDetailsPageActivityIntent = new Intent(this, TaskDetails.class);
-
-            // Add info about what task is being checked
-            goToTaskDetailsPageActivityIntent.putExtra("taskTitle", task.getTitle());
-            goToTaskDetailsPageActivityIntent.putExtra("taskBody", task.getBody());
-            Log.i(TAG, "inside taskSelected trying to move to Task Title " + task.getTitle());
-            MainActivity.this.startActivity(goToTaskDetailsPageActivityIntent);
-        }
+        // Add info about what task is being checked
+        goToTaskDetailsPageActivityIntent.putExtra("taskTitle", task.getTitle());
+        goToTaskDetailsPageActivityIntent.putExtra("taskBody", task.getBody());
+        Log.i(TAG, "inside taskSelected trying to move to Task Title " + task.getTitle());
+        MainActivity.this.startActivity(goToTaskDetailsPageActivityIntent);
+    }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent resultData) {
@@ -246,28 +263,72 @@ public class MainActivity extends AppCompatActivity implements TaskAdapter.OnTas
             if (resultData != null) {
                 uri = resultData.getData();
                 Log.i(TAG, "Uri: " + uri.toString());
-//                showImage(uri);
+                // actually get path from URI
+                Uri selectedImage = uri;
+                String[] filePathColumn = {MediaStore.Images.Media.DATA};
+                Cursor cursor = getContentResolver().query(selectedImage,
+                        filePathColumn, null, null, null);
+                cursor.moveToFirst();
+                int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
+                String picturePath = cursor.getString(columnIndex);
+                cursor.close();
+
+                TransferUtility transferUtility =
+                        TransferUtility.builder()
+                                .context(getApplicationContext())
+                                .awsConfiguration(AWSMobileClient.getInstance().getConfiguration())
+                                .s3Client(new AmazonS3Client(AWSMobileClient.getInstance()))
+                                .build();
+                TransferObserver uploadObserver =
+                        transferUtility.upload(
+                                // filename in the cloud
+                                "public/picolas",
+                                new File(picturePath));
+
+                // Attach a listener to the observer to get state update and progress notifications
+                uploadObserver.setTransferListener(new TransferListener() {
+
+                    @Override
+                    public void onStateChanged(int id, TransferState state) {
+                        if (TransferState.COMPLETED == state) {
+                            // Handle a completed upload.
+                        }
+                    }
+
+                    @Override
+                    public void onProgressChanged(int id, long bytesCurrent, long bytesTotal) {
+                        float percentDonef = ((float) bytesCurrent / (float) bytesTotal) * 100;
+                        int percentDone = (int) percentDonef;
+
+                        Log.d(TAG, "ID:" + id + " bytesCurrent: " + bytesCurrent
+                                + " bytesTotal: " + bytesTotal + " " + percentDone + "%");
+                    }
+
+                    @Override
+                    public void onError(int id, Exception ex) {
+                        // Handle errors
+                    }
+
+                });
             }
         }
     }
+
     public void pickFile(View v) {
         //https://developer.android.com/guide/topics/providers/document-provider
-        Intent i = new Intent(Intent.ACTION_OPEN_DOCUMENT);
-        i.addCategory(Intent.CATEGORY_OPENABLE);
-        i.setType("*/*");
-        startActivityForResult(i, READ_REQUEST_CODE);
+        Intent intent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+        startActivityForResult(intent, READ_REQUEST_CODE);
     }
 
+    abstract class LogDataWhenItComesBackCallback implements Callback {
+
+        MainActivity mainActivityInstance;
+
+        public LogDataWhenItComesBackCallback(MainActivity mainActivityInstance) {
+            this.mainActivityInstance = mainActivityInstance;
+        }
+
+        private static final String TAG = "fisher.Callback";
+
     }
-
-abstract class LogDataWhenItComesBackCallback implements Callback {
-
-    MainActivity mainActivityInstance;
-
-    public LogDataWhenItComesBackCallback(MainActivity mainActivityInstance) {
-        this.mainActivityInstance = mainActivityInstance;
-    }
-
-    private static final String TAG = "fisher.Callback";
-
 }
