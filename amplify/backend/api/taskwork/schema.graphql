@@ -3,6 +3,7 @@ type Task @model {
   name: String!
   description: String!
   taskState: TaskState!
+  team: Team @connection(name: "TeamTasks")
 }
 
 enum TaskState {
@@ -10,4 +11,10 @@ enum TaskState {
   ASSIGNED
   IN_PROGRESS
   COMPLETE
+}
+
+type Team @model {
+  id: ID!
+  name: String!
+  tasks: [Task] @connection(name: "TeamTasks")
 }

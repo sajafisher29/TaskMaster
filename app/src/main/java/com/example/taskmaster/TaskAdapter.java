@@ -31,6 +31,11 @@ class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder> {
         }
     }
 
+//    public static void addTask(Task task) {
+//        this.tasks.add(0, task);
+//        this.notifyItemInserted(0);
+//    }
+
     // RecyclerView needs a new row for holding data
     @NonNull
     @Override

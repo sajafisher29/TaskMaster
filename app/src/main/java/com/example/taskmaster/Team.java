@@ -1,31 +1,30 @@
 package com.example.taskmaster;
 
-import androidx.room.Entity;
-import androidx.room.PrimaryKey;
+import androidx.annotation.NonNull;
 
-import java.util.List;
+import com.amazonaws.amplify.generated.graphql.ListTeamsQuery;
 
-@Entity
 public class Team {
 
-    @PrimaryKey(autoGenerate = true)
-    private long id;
+    private String id;
+    private String name;
 
-    public long getId() {
+    public Team(ListTeamsQuery.Item teamItem) {
+        this.id = teamItem.id();
+        this.name = teamItem.name();
+    }
+
+    public String getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(String id) {
         this.id = id;
     }
 
-    private String name;
-    private List<Task> teamTasks;
-
-    public Team(String name, List<Task> teamTasks) {
-        this.name = name;
-        this.teamTasks = teamTasks;
+    @NonNull
+    @Override
+    public String toString() {
+        return this.name;
     }
-
-    
 }
