@@ -5,6 +5,13 @@ mutation CreateTask($input: CreateTaskInput!) {
     name
     description
     taskState
+    team {
+      id
+      name
+      tasks {
+        nextToken
+      }
+    }
   }
 }
 mutation UpdateTask($input: UpdateTaskInput!) {
@@ -13,6 +20,13 @@ mutation UpdateTask($input: UpdateTaskInput!) {
     name
     description
     taskState
+    team {
+      id
+      name
+      tasks {
+        nextToken
+      }
+    }
   }
 }
 mutation DeleteTask($input: DeleteTaskInput!) {
@@ -21,5 +35,57 @@ mutation DeleteTask($input: DeleteTaskInput!) {
     name
     description
     taskState
+    team {
+      id
+      name
+      tasks {
+        nextToken
+      }
+    }
+  }
+}
+mutation CreateTeam($input: CreateTeamInput!) {
+  createTeam(input: $input) {
+    id
+    name
+    tasks {
+      items {
+        id
+        name
+        description
+        taskState
+      }
+      nextToken
+    }
+  }
+}
+mutation UpdateTeam($input: UpdateTeamInput!) {
+  updateTeam(input: $input) {
+    id
+    name
+    tasks {
+      items {
+        id
+        name
+        description
+        taskState
+      }
+      nextToken
+    }
+  }
+}
+mutation DeleteTeam($input: DeleteTeamInput!) {
+  deleteTeam(input: $input) {
+    id
+    name
+    tasks {
+      items {
+        id
+        name
+        description
+        taskState
+      }
+      nextToken
+    }
   }
 }

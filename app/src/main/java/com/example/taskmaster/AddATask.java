@@ -12,6 +12,7 @@ import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.Adapter;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -20,6 +21,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.amazonaws.amplify.generated.graphql.CreateTaskMutation;
+import com.amazonaws.amplify.generated.graphql.ListTeamsQuery;
 import com.amazonaws.mobile.config.AWSConfiguration;
 import com.amazonaws.mobileconnectors.appsync.AWSAppSyncClient;
 import com.amazonaws.mobileconnectors.appsync.fetcher.AppSyncResponseFetchers;
@@ -28,34 +30,33 @@ import com.apollographql.apollo.exception.ApolloException;
 import org.jetbrains.annotations.NotNull;
 import java.io.IOException;
 import java.util.LinkedList;
+import java.util.List;
 
 import javax.annotation.Nonnull;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Response;
 import type.CreateTaskInput;
+import type.CreateTeamInput;
 import type.TaskState;
 import static android.widget.Toast.*;
 import static androidx.constraintlayout.widget.Constraints.TAG;
 import static com.example.taskmaster.R.string.submit_confirmation;
 
-public class AddATask extends AppCompatActivity {
+public class AddATask extends AppCompatActivity implements AdapterView.OnItemSelectedListener{
 
     private static final String TAG = "fisher.AddATaskActivity";
 
     private EditText inputTaskTitle;
     private EditText inputTaskDescription;
     static AWSAppSyncClient awsAppSyncClient;
-    List<ListTeamsQuery.Item> teams;
-    ListTeamsQuery.Item selectedTeam;
+    List<Team> teams;
+    Team selectedTeam;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_a_task);
-
-        inputTaskTitle = findViewById(R.id.taskTitleInput);
-        inputTaskDescription = findViewById(R.id.taskDescriptionInput);
 
         // Connect with AWS
         awsAppSyncClient = AWSAppSyncClient.builder()
@@ -67,43 +68,13 @@ public class AddATask extends AppCompatActivity {
 
         queryAllTeams();
 
-        runAddTaskMutation(inputTaskTitle.getText().toString(), inputTaskDescription.getText().toString(), type.TaskState.NEW, selectedTeam);
-
-    }
-
-class PostTasksToBackendServerCallback implements Callback {
-
-    AddATask addTaskActivity;
-
-    public PostTasksToBackendServerCallback(AddATask addTaskActivity) {
-        this.addTaskActivity = addTaskActivity;
-    }
-
-    @Override
-    public void onFailure(@NotNull Call call, @NotNull IOException error) {
-        Log.e(TAG, "Error connecting to backend server");
-        Log.e(TAG, error.getMessage());
-    }
-
-    @Override
-    public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
-
-        Handler handlerForMainThread = new Handler(Looper.getMainLooper()) {
-            @Override
-            public void handleMessage(Message inputMessage) {
-                addTaskActivity.finish();
-            }
-        };
-
-        Message completeMessage = handlerForMainThread.obtainMessage(0);
-        completeMessage.sendToTarget();
-
     }
 
     // Callback for inserting a new task
     public GraphQLCall.Callback<CreateTaskMutation.Data> addTaskCallBack = new GraphQLCall.Callback<CreateTaskMutation.Data>() {
         @Override
         public void onResponse(@Nonnull com.apollographql.apollo.api.Response<CreateTaskMutation.Data> response) {
+            Log.i(TAG, "Saved task to team");
             finish();
         }
 
@@ -120,6 +91,22 @@ class PostTasksToBackendServerCallback implements Callback {
                 .enqueue(getAllTeamsCallback);
     }
 
+    public void runAddTaskMutation(View view) {
+
+        EditText inputTaskTitle = findViewById(R.id.taskTitleInput);
+        EditText inputTaskDescription = findViewById(R.id.taskDescriptionInput);
+
+        CreateTaskInput createTaskInput = CreateTaskInput.builder()
+                .name(inputTaskTitle.getText().toString())
+                .description(inputTaskDescription.getText().toString())
+                .taskTeamId(selectedTeam.getId())
+                .build();
+
+        awsAppSyncClient.mutate(CreateTaskMutation.builder().input(createTaskInput).build())
+                .enqueue(addTaskCallBack);
+
+    }
+
     public GraphQLCall.Callback<ListTeamsQuery.Data> getAllTeamsCallback = new GraphQLCall.Callback<ListTeamsQuery.Data>() {
         @Override
         public void onResponse(@Nonnull final com.apollographql.apollo.api.Response<ListTeamsQuery.Data> response) {
@@ -128,19 +115,19 @@ class PostTasksToBackendServerCallback implements Callback {
                 @Override
                 public void handleMessage(Message inputMessage) {
                     teams.clear();
-                    teams.addAll(response.data().listTeams().items());
+                    List<ListTeamsQuery.Item> teamItems = new LinkedList<>();
+                    teamItems.addAll(response.data().listTeams().items());
 
-                    LinkedList<String> teamNames = new LinkedList<>();
-                    for(ListTeamsQuery.Item team: teams) {
-                        teamNames.add(team.name());
+                    for(ListTeamsQuery.Item item: teamItems) {
+                        teams.add(new Team(item));
                     }
 
-                    Spinner spinner =  findViewById(R.id.spinner_select_team);
-                    ArrayAdapter<String> adapter = new ArrayAdapter<>(AddTask.this, android.R.layout.simple_spinner_item, teamNames);
+                    Spinner spinner =  findViewById(R.id.spinnerAddTaskToTeam);
+                    ArrayAdapter<Team> adapter = new ArrayAdapter<>(AddATask.this, android.R.layout.simple_spinner_item, teams);
                     // Specify the layout to use when the list of choices appears
                     adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                     spinner.setAdapter(adapter);
-                    spinner.setOnItemSelectedListener(AddTask.this);
+                    spinner.setOnItemSelectedListener(AddATask.this);
                 }
             };
 
@@ -162,4 +149,5 @@ class PostTasksToBackendServerCallback implements Callback {
     public void onNothingSelected(AdapterView<?> parent) {
 
     }
+
 }

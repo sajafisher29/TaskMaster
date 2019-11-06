@@ -1,6 +1,8 @@
 package com.example.taskmaster;
 
+import android.app.Activity;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -13,6 +15,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.amazonaws.amplify.generated.graphql.ListTasksQuery;
+import com.amazonaws.amplify.generated.graphql.ListTeamsQuery;
 import com.amazonaws.amplify.generated.graphql.OnCreateTaskSubscription;
 import com.amazonaws.mobile.client.AWSMobileClient;
 import com.amazonaws.mobile.client.SignInUIOptions;
@@ -33,6 +36,7 @@ public class MainActivity extends AppCompatActivity implements TaskAdapter.OnTas
 
     private static final String TAG = "fisher.MainActivity";
 
+    private static final int READ_REQUEST_CODE = 42;
     public List<Task> tasks;
     RecyclerView recyclerView;
     AWSAppSyncClient awsAppSyncClient;
@@ -49,36 +53,15 @@ public class MainActivity extends AppCompatActivity implements TaskAdapter.OnTas
 
         runQueryForAllTeams();
 
-        // Subscribe for future updates
-        OnCreateTaskSubscription subscription = OnCreateTaskSubscription.builder().build();
-        awsAppSyncClient.subscribe(subscription).execute(new AppSyncSubscriptionCall.Callback<OnCreateTaskSubscription.Data>() {
-            @Override
-            public void onResponse(@Nonnull com.apollographql.apollo.api.Response<OnCreateTaskSubscription.Data> response) {
-                // AWS calls this method when a new Task is created
-                // Task newTask = new Task(response.data().onCreateTask().title(), response.data().onCreateTask().body(), response.data().onCreateTask().state());
-                // taskAdapter.addTask(newTask);
-            }
-
-            @Override
-            public void onFailure(@Nonnull ApolloException error) {
-                Log.e(TAG, error.getMessage());
-            }
-
-            @Override
-            public void onCompleted() {
-                Log.i(TAG, "Subscribed to task");
-            }
-        });
     }
 
-    public void redirectToAddATeamActivity(View view) {
-        Intent addTeamIntent = new Intent(this, AddATeam.class);
-        startActivity(addTeamIntent);
-    }
+//    public void redirectToAddATeamActivity(View view) {
+//        Intent addTeamIntent = new Intent(this, AddATeam.class);
+//        startActivity(addTeamIntent);
+//    }
 
-    @Override
     public void redirectToTaskDetailPage(Task task) {
-        Intent taskDetailIntent = new Intent(this, TaskDetail.class);
+        Intent taskDetailIntent = new Intent(this, TaskDetails.class);
         taskDetailIntent.putExtra("title", "" + task.getTitle());
         taskDetailIntent.putExtra("description", "" + task.getBody());
         taskDetailIntent.putExtra("state", "" + task.getState());
@@ -90,6 +73,33 @@ public class MainActivity extends AppCompatActivity implements TaskAdapter.OnTas
                 .responseFetcher(AppSyncResponseFetchers.NETWORK_ONLY)
                 .enqueue(getAllTasksCallback);
     }
+
+    private final GraphQLCall.Callback<ListTasksQuery.Data> getAllTasksCallback = new GraphQLCall.Callback<ListTasksQuery.Data>() {
+        @Override
+        public void onResponse(@Nonnull Response<ListTasksQuery.Data> response) {
+            Log.i("Results", response.data().listTasks().items().toString());
+            Handler handlerForMainThread = new Handler(Looper.getMainLooper()) {
+                @Override
+                public void handleMessage(Message inputMessageToMain){
+
+                    List<ListTasksQuery.Item> items = response.data().listTasks().items();
+                    tasks.clear();
+                    for (ListTasksQuery.Item item : items) {
+                        tasks.add(new Task(item.name(), item.description()));
+                    }
+                    recyclerView.getAdapter().notifyDataSetChanged();
+                }
+            };
+            Message completeMessage = handlerForMainThread.obtainMessage(0, response);
+            completeMessage.sendToTarget();
+        };
+
+        @Override
+        public void onFailure (@Nonnull ApolloException error){
+            Log.e("ERROR", error.toString());
+        }
+    };
+
 
     // This gets called automatically when MainActivity is created/shown for the first time
     @Override
@@ -108,7 +118,7 @@ public class MainActivity extends AppCompatActivity implements TaskAdapter.OnTas
                         new com.amazonaws.mobile.client.Callback<UserStateDetails>() {
                             @Override
                             public void onResult(UserStateDetails result) {
-                                signInUser();
+//                                signInUser();
                             }
 
                             @Override
@@ -129,7 +139,6 @@ public class MainActivity extends AppCompatActivity implements TaskAdapter.OnTas
 
         this.tasks = new LinkedList<>();
         this.teams = new LinkedList<>();
-
 
         // Connect to AWS
         awsAppSyncClient = AWSAppSyncClient.builder()
@@ -160,10 +169,19 @@ public class MainActivity extends AppCompatActivity implements TaskAdapter.OnTas
             });
         });
 
-        Button signOutButton = findViewById(R.id.signOutButton);
-        signOutButton.setOnClickListener((event) -> {
-            AWSMobileClient.getInstance().signOut();
-        });
+//        Button signOutButton = findViewById(R.id.signOutButton);
+//        signOutButton.setOnClickListener((event) -> {
+//            @Override
+//            public void onClick (View event){
+//                String username = AWSMobileClient.getInstance().getUsername();
+//
+//                AWSMobileClient.getInstance().signOut();
+//
+//                TextView hiView = findViewById(R.id.greetingTextView);
+//                hiView.setText("Bye " + username + "!");
+//                AWSMobileClient.getInstance().signOut();
+//            }
+//        });
 
     // Grab the add a task button
     Button addTaskButton = findViewById(R.id.addTaskButton);
@@ -211,6 +229,34 @@ public class MainActivity extends AppCompatActivity implements TaskAdapter.OnTas
             Log.i(TAG, "inside taskSelected trying to move to Task Title " + task.getTitle());
             MainActivity.this.startActivity(goToTaskDetailsPageActivityIntent);
         }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent resultData) {
+        // The ACTION_OPEN_DOCUMENT intent was sent with the request code
+        // READ_REQUEST_CODE. If the request code seen here doesn't match, it's the
+        // response to some other intent, and the code below shouldn't run at all.
+
+        super.onActivityResult(requestCode, resultCode, resultData);
+        if (requestCode == READ_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
+            // The document selected by the user won't be returned in the intent.
+            // Instead, a URI to that document will be contained in the return intent
+            // provided to this method as a parameter.
+            // Pull that URI using resultData.getData().
+            Uri uri = null;
+            if (resultData != null) {
+                uri = resultData.getData();
+                Log.i(TAG, "Uri: " + uri.toString());
+//                showImage(uri);
+            }
+        }
+    }
+    public void pickFile(View v) {
+        //https://developer.android.com/guide/topics/providers/document-provider
+        Intent i = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+        i.addCategory(Intent.CATEGORY_OPENABLE);
+        i.setType("*/*");
+        startActivityForResult(i, READ_REQUEST_CODE);
+    }
 
     }
 
