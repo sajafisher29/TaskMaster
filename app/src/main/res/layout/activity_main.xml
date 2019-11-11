@@ -8,6 +8,36 @@
     android:background="@color/colorPrimary"
     android:paddingTop="?attr/actionBarSize">
 
+    <Button
+        android:id="@+id/signInButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="117dp"
+        android:text="@string/sign_in_button"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/signOutButton"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/signOutButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:onClick="onSignOutButtonClick"
+        android:text="@string/sign_out_button"
+        app:layout_constraintEnd_toStartOf="@+id/signInButton"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/greetingTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="24dp"
+        app:layout_constraintBottom_toTopOf="@+id/homePageHeader"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <TextView
         android:id="@+id/homePageHeader"
         android:layout_width="wrap_content"
@@ -16,10 +46,43 @@
         android:text="@string/My_tasks"
         android:textAppearance="@style/TextAppearance.AppCompat.Display1"
         android:textSize="30sp"
-        app:layout_constraintBottom_toTopOf="@+id/mainRecyclerView"
+        app:layout_constraintBottom_toTopOf="@+id/chooseExistingTeamLabel"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/greetingTextView" />
+
+    <TextView
+        android:id="@+id/chooseExistingTeamLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="24dp"
+        android:text="@string/choose_existing_team"
+        app:layout_constraintBottom_toTopOf="@+id/teamSpinner"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/homePageHeader" />
+
+    <Spinner
+        android:id="@+id/teamSpinner"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="24dp"
+        app:layout_constraintBottom_toTopOf="@+id/mainRecyclerView"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/chooseExistingTeamLabel" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/mainRecyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:background="#8BC34A"
+        app:layout_constraintDimensionRatio="1:1"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.518"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/teamSpinner" />
 
     <Button
         android:id="@+id/addTaskButton"
@@ -55,49 +118,6 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
-
-    <TextView
-        android:id="@+id/greetingTextView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/Hello"
-        app:layout_constraintBottom_toTopOf="@+id/homePageHeader"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/signInButton" />
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/mainRecyclerView"
-        android:layout_width="429dp"
-        android:layout_height="240dp"
-        android:layout_marginTop="24dp"
-        android:background="#8BC34A"
-        app:layout_constraintDimensionRatio="1:1"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.518"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/homePageHeader" />
-
-    <Button
-        android:id="@+id/signInButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="60dp"
-        android:text="@string/sign_in_button"
-        app:layout_constraintBottom_toTopOf="@id/greetingTextView"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/signOutButton" />
-
-    <Button
-        android:id="@+id/signOutButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/sign_out_button"
-        app:layout_constraintBottom_toTopOf="@+id/greetingTextView"
-        app:layout_constraintEnd_toStartOf="@+id/signInButton"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.007" />
 
     <Button
         android:id="@+id/button"

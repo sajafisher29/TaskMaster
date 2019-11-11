@@ -9,14 +9,8 @@ public class Task {
 
     @PrimaryKey(autoGenerate = true)
     private long id;
-
-    public long getId() {
-        return id;
-    }
-
-    public void setId(long id) {
-        this.id = id;
-    }
+    private String title;
+    private String body;
 
     @TypeConverters(TaskStatusConverter.class)
     public TaskState taskState;
@@ -34,13 +28,23 @@ public class Task {
         }
     }
 
-    private String title;
-    private String body;
-
     public Task(String title, String body) {
         this.title = title;
         this.body = body;
-        this.taskState = TaskState.NEW;
+    }
+
+    public Task(String title, String body, int taskState) {
+        this.title = title;
+        this.body = body;
+        this.taskState = getState();
+    }
+
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
     }
 
     public String getTitle() {

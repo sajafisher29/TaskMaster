@@ -11,17 +11,22 @@ import android.os.Message;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.Spinner;
 import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.amazonaws.amplify.generated.graphql.GetTeamQuery;
 import com.amazonaws.amplify.generated.graphql.ListTasksQuery;
 import com.amazonaws.amplify.generated.graphql.ListTeamsQuery;
-import com.amazonaws.amplify.generated.graphql.OnCreateTaskSubscription;
 import com.amazonaws.mobile.client.AWSMobileClient;
 import com.amazonaws.mobile.client.SignInUIOptions;
+import com.amazonaws.mobile.client.UserState;
 import com.amazonaws.mobile.client.UserStateDetails;
 import com.amazonaws.mobile.config.AWSConfiguration;
 import com.amazonaws.mobileconnectors.appsync.AWSAppSyncClient;
@@ -35,7 +40,6 @@ import com.amazonaws.services.s3.AmazonS3Client;
 import com.apollographql.apollo.GraphQLCall;
 import com.apollographql.apollo.api.Response;
 import com.apollographql.apollo.exception.ApolloException;
-
 import java.io.File;
 import java.util.LinkedList;
 import java.util.List;
@@ -44,7 +48,7 @@ import okhttp3.Callback;
 
 import static android.Manifest.permission.READ_EXTERNAL_STORAGE;
 
-public class MainActivity extends AppCompatActivity implements TaskAdapter.OnTaskInteractionListener {
+public class MainActivity extends AppCompatActivity implements TaskAdapter.OnTaskInteractionListener, AdapterView.OnItemSelectedListener {
 
     private static final String TAG = "fisher.MainActivity";
 
@@ -53,67 +57,8 @@ public class MainActivity extends AppCompatActivity implements TaskAdapter.OnTas
     RecyclerView recyclerView;
     AWSAppSyncClient awsAppSyncClient;
     private RecyclerView.Adapter taskAdapter;
-    List<ListTeamsQuery.Item> teams;
-    ListTeamsQuery.Item selectedTeam;
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        String username = AWSMobileClient.getInstance().getUsername();
-        TextView nameTextView = findViewById(R.id.greetingTextView);
-        nameTextView.setText("Hello " + username + "!"); // Strings are coded to replace this. Needs to be refactored so it is translatable.
-
-        runQueryForAllTeams();
-
-    }
-
-//    public void redirectToAddATeamActivity(View view) {
-//        Intent addTeamIntent = new Intent(this, AddATeam.class);
-//        startActivity(addTeamIntent);
-//    }
-
-    public void redirectToTaskDetailPage(Task task) {
-        Intent taskDetailIntent = new Intent(this, TaskDetails.class);
-        taskDetailIntent.putExtra("title", "" + task.getTitle());
-        taskDetailIntent.putExtra("description", "" + task.getBody());
-        taskDetailIntent.putExtra("state", "" + task.getState());
-        startActivity(taskDetailIntent);
-    }
-
-    public void runQueryForAllTeams() {
-        awsAppSyncClient.query(ListTasksQuery.builder().build())
-                .responseFetcher(AppSyncResponseFetchers.NETWORK_ONLY)
-                .enqueue(getAllTasksCallback);
-    }
-
-    private final GraphQLCall.Callback<ListTasksQuery.Data> getAllTasksCallback = new GraphQLCall.Callback<ListTasksQuery.Data>() {
-        @Override
-        public void onResponse(@Nonnull Response<ListTasksQuery.Data> response) {
-            Log.i("Results", response.data().listTasks().items().toString());
-            Handler handlerForMainThread = new Handler(Looper.getMainLooper()) {
-                @Override
-                public void handleMessage(Message inputMessageToMain) {
-
-                    List<ListTasksQuery.Item> items = response.data().listTasks().items();
-                    tasks.clear();
-                    for (ListTasksQuery.Item item : items) {
-                        tasks.add(new Task(item.name(), item.description()));
-                    }
-                    recyclerView.getAdapter().notifyDataSetChanged();
-                }
-            };
-            Message completeMessage = handlerForMainThread.obtainMessage(0, response);
-            completeMessage.sendToTarget();
-        }
-
-        ;
-
-        @Override
-        public void onFailure(@Nonnull ApolloException error) {
-            Log.e("ERROR", error.toString());
-        }
-    };
-
+    List<ListTeamsQuery.Item> teamItems;  //originally teams
+    ListTeamsQuery.Item selectedTeamItem; //originally selectedTeam
 
     // This gets called automatically when MainActivity is created/shown for the first time
     @Override
@@ -121,23 +66,18 @@ public class MainActivity extends AppCompatActivity implements TaskAdapter.OnTas
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        String[] permissions = {READ_EXTERNAL_STORAGE};
-
-        getApplicationContext().startService(new Intent(getApplicationContext(), TransferService.class));
-        ActivityCompat.requestPermissions(this, permissions, 1);
-
         // Initialize AWS' Mobile Client to check on log in/out status
         AWSMobileClient.getInstance().initialize(getApplicationContext(), new com.amazonaws.mobile.client.Callback<UserStateDetails>() {
             @Override
             public void onResult(UserStateDetails result) {
                 Log.i("INIT", "onResult: " + result.getUserState().toString());
-                if (result.getUserState().toString().equals("SIGN_OUT")) {
+                if (result.getUserState().toString().equals("SIGNED_OUT")) {
                     AWSMobileClient.getInstance().showSignIn(MainActivity.this,
                             SignInUIOptions.builder().logo(R.drawable.leaftaskmasterapp).build(),
                             new com.amazonaws.mobile.client.Callback<UserStateDetails>() {
                                 @Override
                                 public void onResult(UserStateDetails result) {
-//                                signInUser();
+
                                 }
 
                                 @Override
@@ -154,53 +94,65 @@ public class MainActivity extends AppCompatActivity implements TaskAdapter.OnTas
             }
         });
 
-        setContentView(R.layout.activity_main);
-
-        this.tasks = new LinkedList<>();
-        this.teams = new LinkedList<>();
-
         // Connect to AWS
         awsAppSyncClient = AWSAppSyncClient.builder()
                 .context(getApplicationContext())
                 .awsConfiguration(new AWSConfiguration(getApplicationContext()))
                 .build();
 
+        this.tasks = new LinkedList<>();
+        this.teamItems = new LinkedList<>();
+
+        String[] permissions = {READ_EXTERNAL_STORAGE};
+
+        queryAllTeams();
+
+        getApplicationContext().startService(new Intent(getApplicationContext(), TransferService.class));
+        ActivityCompat.requestPermissions(this, permissions, 1);
+
+        setContentView(R.layout.activity_main);
+
+//        Button signInButton = findViewById(R.id.signInButton);
+//        signInButton.setOnClickListener((event) -> {
+//            // Add the sign in
+//            // 'this' refers the the current active activity, probably replace with MainActivity.this
+//            AWSMobileClient.getInstance().showSignIn(MainActivity.this, SignInUIOptions.builder().build(), new com.amazonaws.mobile.client.Callback<UserStateDetails>() {
+//                @Override
+//                public void onResult(UserStateDetails result) {
+//                    Log.d(TAG, "onResult: " + result.getUserState());
+//                    if (result.getUserState().equals(UserState.SIGNED_IN)) {
+//                        String username = AWSMobileClient.getInstance().getUsername();
+//                        TextView hiView = findViewById(R.id.greetingTextView);
+//                        hiView.setText("Hello " + username + "!");
+//                    }
+//                }
+//
+//                @Override
+//                public void onError(Exception error) {
+//                    Log.e(TAG, "onError: ", error);
+//                }
+//            });
+//        });
+
+//        Button signOutButton = findViewById(R.id.signOutButton);
+//        signOutButton.setOnClickListener((event) -> {
+////            @Override
+////            public void onClick (View event){
+////                String username = AWSMobileClient.getInstance().getUsername();
+////
+////                AWSMobileClient.getInstance().signOut();
+////
+////                TextView hiView = findViewById(R.id.greetingTextView);
+////                hiView.setText("Bye " + username + "!");
+////                AWSMobileClient.getInstance().signOut();
+////            }
+//        });
+
         // Set up RecyclerView
         recyclerView = findViewById(R.id.mainRecyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         taskAdapter = new TaskAdapter(tasks, this);
         recyclerView.setAdapter(taskAdapter);
-
-        Button signInButton = findViewById(R.id.signInButton);
-        signInButton.setOnClickListener((event) -> {
-            // Add the sign in
-            // 'this' refers the the current active activity, probably replace with MainActivity.this
-            AWSMobileClient.getInstance().showSignIn(MainActivity.this, SignInUIOptions.builder().build(), new com.amazonaws.mobile.client.Callback<UserStateDetails>() {
-                @Override
-                public void onResult(UserStateDetails result) {
-                    Log.d(TAG, "onResult: " + result.getUserState());
-                }
-
-                @Override
-                public void onError(Exception error) {
-                    Log.e(TAG, "onError: ", error);
-                }
-            });
-        });
-
-//        Button signOutButton = findViewById(R.id.signOutButton);
-//        signOutButton.setOnClickListener((event) -> {
-//            @Override
-//            public void onClick (View event){
-//                String username = AWSMobileClient.getInstance().getUsername();
-//
-//                AWSMobileClient.getInstance().signOut();
-//
-//                TextView hiView = findViewById(R.id.greetingTextView);
-//                hiView.setText("Bye " + username + "!");
-//                AWSMobileClient.getInstance().signOut();
-//            }
-//        });
 
         // Grab the add a task button
         Button addTaskButton = findViewById(R.id.addTaskButton);
@@ -236,6 +188,95 @@ public class MainActivity extends AppCompatActivity implements TaskAdapter.OnTas
         });
 
     }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (AWSMobileClient.getInstance().isSignedIn()) {
+            String username = AWSMobileClient.getInstance().getUsername();
+            TextView nameTextView = findViewById(R.id.greetingTextView);
+            nameTextView.setText("Hello " + username + "!");
+            Log.i("fisher.signin", username);
+        }
+    }
+
+    // Query all teams in DynamoDB to fill spinner
+    public void queryAllTeams() {
+        awsAppSyncClient.query(ListTeamsQuery.builder().build())
+                .responseFetcher(AppSyncResponseFetchers.NETWORK_ONLY)
+                .enqueue(getAllTeamsCallback);
+    }
+
+    // Query team tasks in DynamoDB to fill RecyclerView
+    public void queryForAllTeams() {
+        awsAppSyncClient.query(ListTasksQuery.builder().build())
+                .responseFetcher(AppSyncResponseFetchers.NETWORK_ONLY)
+                .enqueue(getAllTasksCallback);
+    }
+
+    public void querySelectedTeamTasks() {
+        GetTeamQuery getTeamTasks = GetTeamQuery.builder().id(selectedTeamItem.id()).build();
+        awsAppSyncClient.query(getTeamTasks)
+                .responseFetcher(AppSyncResponseFetchers.NETWORK_ONLY)
+                .enqueue(getAllTeamTasksCallback);
+    }
+
+    public void redirectToTaskDetailPage(Task task) {
+        Intent taskDetailIntent = new Intent(this, TaskDetails.class);
+        taskDetailIntent.putExtra("title", "" + task.getTitle());
+        taskDetailIntent.putExtra("description", "" + task.getBody());
+        taskDetailIntent.putExtra("state", "" + task.getState());
+        startActivity(taskDetailIntent);
+    }
+
+    private final GraphQLCall.Callback<ListTasksQuery.Data> getAllTasksCallback = new GraphQLCall.Callback<ListTasksQuery.Data>() {
+        @Override
+        public void onResponse(@Nonnull Response<ListTasksQuery.Data> response) {
+            Log.i("Results", response.data().listTasks().items().toString());
+            Handler handlerForMainThread = new Handler(Looper.getMainLooper()) {
+                @Override
+                public void handleMessage(Message inputMessageToMain) {
+
+                    List<ListTasksQuery.Item> items = response.data().listTasks().items();
+                    tasks.clear();
+                    for (ListTasksQuery.Item item : items) {
+                        tasks.add(new Task(item.name(), item.description()));
+                    }
+                    recyclerView.getAdapter().notifyDataSetChanged();
+                }
+            };
+            Message completeMessage = handlerForMainThread.obtainMessage(0, response);
+            completeMessage.sendToTarget();
+        }
+
+        @Override
+        public void onFailure(@Nonnull ApolloException error) {
+            Log.e("ERROR", error.toString());
+        }
+    };
+
+    private final GraphQLCall.Callback<GetTeamQuery.Data> getAllTeamTasksCallback = new GraphQLCall.Callback<GetTeamQuery.Data>() {
+        @Override
+        public void onResponse(@Nonnull Response<GetTeamQuery.Data> response) {
+            Handler handlerForMainThread = new Handler(Looper.getMainLooper()) {
+                @Override
+                public void handleMessage (Message inputMessageToMain) {
+                    List<GetTeamQuery.Item> selectedTeamTasksList = response.data().getTeam().tasks().items();
+                    tasks.clear();
+                    for (GetTeamQuery.Item item : selectedTeamTasksList) {
+                        tasks.add(new Task(item.name(), item.description()));
+                    }
+                    recyclerView.getAdapter().notifyDataSetChanged();
+                }
+            };
+            handlerForMainThread.obtainMessage().sendToTarget();
+        }
+
+        @Override
+        public void onFailure(@Nonnull ApolloException e) {
+
+        }
+    };
 
     public void taskSelected(Task task) {
         Intent goToTaskDetailsPageActivityIntent = new Intent(this, TaskDetails.class);
@@ -320,6 +361,14 @@ public class MainActivity extends AppCompatActivity implements TaskAdapter.OnTas
         startActivityForResult(intent, READ_REQUEST_CODE);
     }
 
+    public void onSignOutButtonClick(View view) {
+        AWSMobileClient.getInstance().signOut();
+        String username = AWSMobileClient.getInstance().getUsername();
+        TextView hiView = findViewById(R.id.greetingTextView);
+        hiView.setText("Bye!");
+        Log.i(TAG, "Logging out" + AWSMobileClient.getInstance().currentUserState());
+    }
+
     abstract class LogDataWhenItComesBackCallback implements Callback {
 
         MainActivity mainActivityInstance;
@@ -331,4 +380,50 @@ public class MainActivity extends AppCompatActivity implements TaskAdapter.OnTas
         private static final String TAG = "fisher.Callback";
 
     }
+
+    public GraphQLCall.Callback<ListTeamsQuery.Data> getAllTeamsCallback = new GraphQLCall.Callback<ListTeamsQuery.Data>() {
+        @Override
+        public void onResponse(@Nonnull final com.apollographql.apollo.api.Response<ListTeamsQuery.Data> response) {
+
+            Handler handlerForMainThread = new Handler(Looper.getMainLooper()) {
+                @Override
+                public void handleMessage(Message inputMessage) {
+                    teamItems.clear();
+                    teamItems.addAll(response.data().listTeams().items());
+
+                    List<String> teamNames = new LinkedList<>();
+                    for (ListTeamsQuery.Item item : teamItems) {
+                        teamNames.add(item.name());
+                    }
+
+                    Spinner spinner = findViewById(R.id.teamSpinner);
+                    ArrayAdapter<String> adapter = new ArrayAdapter<>(MainActivity.this, android.R.layout.simple_spinner_item, teamNames);
+                    // Specify the layout to use when the list of choices appears
+                    adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                    spinner.setAdapter(adapter);
+                    spinner.setOnItemSelectedListener(MainActivity.this);
+                }
+            };
+
+            handlerForMainThread.obtainMessage().sendToTarget();
+        }
+
+        @Override
+        public void onFailure(@Nonnull ApolloException error) {
+            Log.e(TAG, error.getMessage());
+        }
+    };
+
+    @Override
+    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+        selectedTeamItem = teamItems.get(position);
+        //Once we have the selected team we need to render that teams tasks
+        querySelectedTeamTasks();
+    }
+
+    @Override
+    public void onNothingSelected(AdapterView<?> parent) {
+
+    }
+
 }

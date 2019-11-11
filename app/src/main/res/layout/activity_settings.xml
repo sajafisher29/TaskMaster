@@ -33,7 +33,7 @@
         android:id="@+id/usernameSaveButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:onClick="onSaveButtonClicked"
+        android:onClick="onSaveUsernameButtonClicked"
         android:text="@string/save_username_button"
         app:layout_constraintBottom_toTopOf="@+id/chooseExistingTeamLabel"
         app:layout_constraintEnd_toEndOf="parent"
@@ -66,39 +66,16 @@
         app:layout_constraintTop_toBottomOf="@+id/taskPreferencesInput"
         app:layout_constraintVertical_bias="0.632" />
 
-
-    <Spinner
-        android:id="@+id/teamSpinner"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_constraintBottom_toTopOf="@+id/teamSelectionButton"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/chooseExistingTeamLabel" />
-
-    <TextView
-        android:id="@+id/chooseExistingTeamLabel"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/choose_existing_team"
-        app:layout_constraintBottom_toTopOf="@+id/teamSpinner"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="@+id/teamSpinner"
-        app:layout_constraintTop_toBottomOf="@+id/usernameSaveButton" />
-
     <EditText
         android:id="@+id/teamNameInput"
-        android:layout_width="0dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:ems="10"
         android:hint="Team Name"
         android:inputType="textPersonName"
-        android:text="Name"
-        app:layout_constraintBottom_toTopOf="@+id/teamSaveButton"
+        app:layout_constraintBottom_toTopOf="@+id/usernameSaveButton"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/teamSelectionButton" />
 
