@@ -71,6 +71,33 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/taskTitleInput" />
 
+    <RadioGroup xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/radioTaskState"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <RadioButton android:id="@+id/radio_taskState_new"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/task_state_new"
+            android:onClick="onRadioButtonClicked"/>
+        <RadioButton android:id="@+id/radio_taskState_in_progress"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/task_state_in_progress"
+            android:onClick="onRadioButtonClicked"/>
+        <RadioButton android:id="@+id/radio_taskState_assigned"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/task_state_in_progress"
+            android:onClick="onRadioButtonClicked"/>
+        <RadioButton android:id="@+id/radio_taskState_completed"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/task_state_completed"
+            android:onClick="onRadioButtonClicked"/>
+    </RadioGroup>
+
     <Button
         android:id="@+id/addTaskButton"
         android:layout_width="wrap_content"

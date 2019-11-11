@@ -9,7 +9,10 @@ import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.EditText;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.Spinner;
 import com.amazonaws.amplify.generated.graphql.CreateTaskMutation;
 import com.amazonaws.amplify.generated.graphql.ListTeamsQuery;
@@ -22,6 +25,7 @@ import java.util.LinkedList;
 import java.util.List;
 import javax.annotation.Nonnull;
 import type.CreateTaskInput;
+import type.TaskState;
 
 public class AddATask extends AppCompatActivity implements AdapterView.OnItemSelectedListener{
 
@@ -32,6 +36,8 @@ public class AddATask extends AppCompatActivity implements AdapterView.OnItemSel
     static AWSAppSyncClient awsAppSyncClient;
     List<Team> teams;
     Team selectedTeam;
+    private RadioGroup radioTaskStateGroup;
+    private RadioButton radioTaskStateButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,17 +81,39 @@ public class AddATask extends AppCompatActivity implements AdapterView.OnItemSel
 
         EditText inputTaskTitle = findViewById(R.id.taskTitleInput);
         EditText inputTaskDescription = findViewById(R.id.taskDescriptionInput);
+//        EditText inputTaskState = findViewById(R.id.rad);
 
         CreateTaskInput createTaskInput = CreateTaskInput.builder()
                 .name(inputTaskTitle.getText().toString())
                 .description(inputTaskDescription.getText().toString())
                 .taskTeamId(selectedTeam.getId())
+                .taskState(TaskState.NEW)
                 .build();
 
         awsAppSyncClient.mutate(CreateTaskMutation.builder().input(createTaskInput).build())
                 .enqueue(addTaskCallBack);
 
     }
+
+//    public void addListenerOnButton() {
+//
+//        radioTaskStateGroup = (RadioGroup) findViewById(R.id.radioTaskState);
+//        btnDisplay = (Button) findViewById(R.id.btnDisplay);
+//
+//        btnDisplay.setOnClickListener(new View.OnClickListener() {
+//
+//            @Override
+//            public void onClick(View v) {
+//
+//                // get selected radio button from radioGroup
+//                int selectedId = radioTaskStateGroup.getCheckedRadioButtonId();
+//
+//                // find the radiobutton by returned id
+//                radioTaskStateButton = findViewById(selectedId);
+//
+//            }
+//        });
+//    }
 
     public GraphQLCall.Callback<ListTeamsQuery.Data> getAllTeamsCallback = new GraphQLCall.Callback<ListTeamsQuery.Data>() {
         @Override
