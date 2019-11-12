@@ -11,6 +11,8 @@ public class Task {
     private long id;
     private String title;
     private String body;
+    private Team team;
+    private String fileKey;
 
     @TypeConverters(TaskStatusConverter.class)
     public TaskState taskState;
@@ -38,6 +40,24 @@ public class Task {
         this.body = body;
         this.taskState = getState();
     }
+
+    public Task(String title, String body, TaskState state, Team team, String fileKey) {
+        this.title = title;
+        this.body = body;
+        this.taskState = state;
+        this.team = team;
+        this.fileKey = fileKey;
+    }
+
+    public Task(String title, String body, TaskState state, Team team) {
+        this.title = title;
+        this.body = body;
+        this.taskState = state;
+        this.team = team;
+        this.fileKey = null;
+    }
+
+    public Task() {}
 
     public long getId() {
         return id;

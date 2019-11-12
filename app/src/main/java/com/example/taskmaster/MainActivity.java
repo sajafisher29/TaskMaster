@@ -20,13 +20,11 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
 import com.amazonaws.amplify.generated.graphql.GetTeamQuery;
 import com.amazonaws.amplify.generated.graphql.ListTasksQuery;
 import com.amazonaws.amplify.generated.graphql.ListTeamsQuery;
 import com.amazonaws.mobile.client.AWSMobileClient;
 import com.amazonaws.mobile.client.SignInUIOptions;
-import com.amazonaws.mobile.client.UserState;
 import com.amazonaws.mobile.client.UserStateDetails;
 import com.amazonaws.mobile.config.AWSConfiguration;
 import com.amazonaws.mobileconnectors.appsync.AWSAppSyncClient;
@@ -45,14 +43,12 @@ import java.util.LinkedList;
 import java.util.List;
 import javax.annotation.Nonnull;
 import okhttp3.Callback;
-
 import static android.Manifest.permission.READ_EXTERNAL_STORAGE;
 
 public class MainActivity extends AppCompatActivity implements TaskAdapter.OnTaskInteractionListener, AdapterView.OnItemSelectedListener {
 
     private static final String TAG = "fisher.MainActivity";
 
-    private static final int READ_REQUEST_CODE = 42;
     public List<Task> tasks;
     RecyclerView recyclerView;
     AWSAppSyncClient awsAppSyncClient;
@@ -103,50 +99,9 @@ public class MainActivity extends AppCompatActivity implements TaskAdapter.OnTas
         this.tasks = new LinkedList<>();
         this.teamItems = new LinkedList<>();
 
-        String[] permissions = {READ_EXTERNAL_STORAGE};
-
         queryAllTeams();
 
-        getApplicationContext().startService(new Intent(getApplicationContext(), TransferService.class));
-        ActivityCompat.requestPermissions(this, permissions, 1);
-
         setContentView(R.layout.activity_main);
-
-//        Button signInButton = findViewById(R.id.signInButton);
-//        signInButton.setOnClickListener((event) -> {
-//            // Add the sign in
-//            // 'this' refers the the current active activity, probably replace with MainActivity.this
-//            AWSMobileClient.getInstance().showSignIn(MainActivity.this, SignInUIOptions.builder().build(), new com.amazonaws.mobile.client.Callback<UserStateDetails>() {
-//                @Override
-//                public void onResult(UserStateDetails result) {
-//                    Log.d(TAG, "onResult: " + result.getUserState());
-//                    if (result.getUserState().equals(UserState.SIGNED_IN)) {
-//                        String username = AWSMobileClient.getInstance().getUsername();
-//                        TextView hiView = findViewById(R.id.greetingTextView);
-//                        hiView.setText("Hello " + username + "!");
-//                    }
-//                }
-//
-//                @Override
-//                public void onError(Exception error) {
-//                    Log.e(TAG, "onError: ", error);
-//                }
-//            });
-//        });
-
-//        Button signOutButton = findViewById(R.id.signOutButton);
-//        signOutButton.setOnClickListener((event) -> {
-////            @Override
-////            public void onClick (View event){
-////                String username = AWSMobileClient.getInstance().getUsername();
-////
-////                AWSMobileClient.getInstance().signOut();
-////
-////                TextView hiView = findViewById(R.id.greetingTextView);
-////                hiView.setText("Bye " + username + "!");
-////                AWSMobileClient.getInstance().signOut();
-////            }
-//        });
 
         // Set up RecyclerView
         recyclerView = findViewById(R.id.mainRecyclerView);
@@ -196,7 +151,7 @@ public class MainActivity extends AppCompatActivity implements TaskAdapter.OnTas
             String username = AWSMobileClient.getInstance().getUsername();
             TextView nameTextView = findViewById(R.id.greetingTextView);
             nameTextView.setText("Hello " + username + "!");
-            Log.i("fisher.signin", username);
+            Log.i(TAG, "fisher.signin" + username);
         }
     }
 
@@ -286,79 +241,6 @@ public class MainActivity extends AppCompatActivity implements TaskAdapter.OnTas
         goToTaskDetailsPageActivityIntent.putExtra("taskBody", task.getBody());
         Log.i(TAG, "inside taskSelected trying to move to Task Title " + task.getTitle());
         MainActivity.this.startActivity(goToTaskDetailsPageActivityIntent);
-    }
-
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent resultData) {
-        // The ACTION_OPEN_DOCUMENT intent was sent with the request code
-        // READ_REQUEST_CODE. If the request code seen here doesn't match, it's the
-        // response to some other intent, and the code below shouldn't run at all.
-
-        super.onActivityResult(requestCode, resultCode, resultData);
-        if (requestCode == READ_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
-            // The document selected by the user won't be returned in the intent.
-            // Instead, a URI to that document will be contained in the return intent
-            // provided to this method as a parameter.
-            // Pull that URI using resultData.getData().
-            Uri uri = null;
-            if (resultData != null) {
-                uri = resultData.getData();
-                Log.i(TAG, "Uri: " + uri.toString());
-                // actually get path from URI
-                Uri selectedImage = uri;
-                String[] filePathColumn = {MediaStore.Images.Media.DATA};
-                Cursor cursor = getContentResolver().query(selectedImage,
-                        filePathColumn, null, null, null);
-                cursor.moveToFirst();
-                int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
-                String picturePath = cursor.getString(columnIndex);
-                cursor.close();
-
-                TransferUtility transferUtility =
-                        TransferUtility.builder()
-                                .context(getApplicationContext())
-                                .awsConfiguration(AWSMobileClient.getInstance().getConfiguration())
-                                .s3Client(new AmazonS3Client(AWSMobileClient.getInstance()))
-                                .build();
-                TransferObserver uploadObserver =
-                        transferUtility.upload(
-                                // filename in the cloud
-                                "public/picolas",
-                                new File(picturePath));
-
-                // Attach a listener to the observer to get state update and progress notifications
-                uploadObserver.setTransferListener(new TransferListener() {
-
-                    @Override
-                    public void onStateChanged(int id, TransferState state) {
-                        if (TransferState.COMPLETED == state) {
-                            // Handle a completed upload.
-                        }
-                    }
-
-                    @Override
-                    public void onProgressChanged(int id, long bytesCurrent, long bytesTotal) {
-                        float percentDonef = ((float) bytesCurrent / (float) bytesTotal) * 100;
-                        int percentDone = (int) percentDonef;
-
-                        Log.d(TAG, "ID:" + id + " bytesCurrent: " + bytesCurrent
-                                + " bytesTotal: " + bytesTotal + " " + percentDone + "%");
-                    }
-
-                    @Override
-                    public void onError(int id, Exception ex) {
-                        // Handle errors
-                    }
-
-                });
-            }
-        }
-    }
-
-    public void pickFile(View v) {
-        //https://developer.android.com/guide/topics/providers/document-provider
-        Intent intent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-        startActivityForResult(intent, READ_REQUEST_CODE);
     }
 
     public void onSignOutButtonClick(View view) {
