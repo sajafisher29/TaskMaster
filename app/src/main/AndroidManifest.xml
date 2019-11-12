@@ -22,7 +22,14 @@
         <activity android:name=".Settings" />
         <activity android:name=".TaskDetails" />
         <activity android:name=".AllTasks" />
-        <activity android:name=".AddATask" />
+        <activity
+            android:name=".AddATask">
+            <intent-filter android:label="Input task description">
+                <action android:name="android.intent.action.SEND"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+                <data android:mimeType="text/plain"/>
+            </intent-filter>
+        </activity>
         <activity
             android:name=".MainActivity">
             <intent-filter>

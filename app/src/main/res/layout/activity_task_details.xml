@@ -17,14 +17,26 @@
 
     <TextView
         android:id="@+id/taskDetailsDescription"
-        android:layout_width="322dp"
-        android:layout_height="582dp"
+        android:layout_width="309dp"
+        android:layout_height="315dp"
         android:isScrollContainer="true"
         android:lineSpacingExtra="8sp"
         android:textSize="12sp"
         app:autoSizeTextType="none"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/mediaPlaceholder"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/taskDetailsHeading" />
+
+    <ImageView
+        android:id="@+id/mediaPlaceholder"
+        android:layout_width="308dp"
+        android:layout_height="243dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.504"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/taskDetailsDescription"
+        app:srcCompat="@drawable/leaftaskmasterapp" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

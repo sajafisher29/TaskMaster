@@ -67,4 +67,7 @@ dependencies {
     //For the drop-in UI also:
     implementation 'com.amazonaws:aws-android-sdk-auth-userpools:2.15.+'
     implementation 'com.amazonaws:aws-android-sdk-auth-ui:2.15.+'
+
+    //Picasso
+    implementation 'com.squareup.picasso:picasso:2.71828'
 }
