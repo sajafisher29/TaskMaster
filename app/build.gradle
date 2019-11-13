@@ -4,9 +4,9 @@ android {
     compileSdkVersion 29
     buildToolsVersion "29.0.1"
     defaultConfig {
-        applicationId 'com.fishersarah.taskmaster'
+        applicationId 'com.example.taskmaster'
         minSdkVersion 28
-        targetSdkVersion 29
+        targetSdkVersion 28
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
@@ -70,4 +70,22 @@ dependencies {
 
     //Picasso
     implementation 'com.squareup.picasso:picasso:2.71828'
+
+    // Overrides an auth dependency to ensure correct behavior
+    implementation 'com.google.android.gms:play-services-auth:15.0.1'
+
+    implementation 'com.google.firebase:firebase-core:16.0.1'
+    implementation 'com.google.firebase:firebase-messaging:17.3.0'
+
+    implementation 'com.amazonaws:aws-android-sdk-pinpoint:2.15.+'
+    implementation ('com.amazonaws:aws-android-sdk-mobile-client:2.15.+@aar') { transitive = true }
+    // add the Firebase SDK for Google Analytics
+    implementation 'com.google.firebase:firebase-analytics:16.0.1'
+    // add SDKs for any other desired Firebase products
+    // https://firebase.google.com/docs/android/setup#available-libraries
+
+    // Location
+    implementation 'com.google.android.gms:play-services-location:15.0.1'
 }
+
+apply plugin: 'com.google.gms.google-services'

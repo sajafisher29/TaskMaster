@@ -25,4 +25,5 @@
     <string name="task_state_in_progress">In progress</string>
     <string name="task_state_assigned">Assigned</string>
     <string name="task_state_completed">Completed</string>
+    <string name="get_location">Get Location</string>
 </resources>

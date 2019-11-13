@@ -75,5 +75,27 @@
 			},
 			"lastPushDirHash": "evEkuY/b9zErBDBC7orNMkyGGRQ="
 		}
+	},
+	"notifications": {
+		"TaskMastere9ysa": {
+			"service": "Pinpoint",
+			"output": {
+				"Name": "TaskMastere9ysa-cf",
+				"Id": "89545c856866429abc0adfead263e5e4",
+				"Region": "us-west-2",
+				"FCM": {
+					"ApplicationId": "89545c856866429abc0adfead263e5e4",
+					"CreationDate": "2019-11-13T19:01:55.850Z",
+					"Enabled": true,
+					"HasCredential": true,
+					"Id": "gcm",
+					"IsArchived": false,
+					"LastModifiedDate": "2019-11-13T19:01:55.850Z",
+					"Platform": "GCM",
+					"Version": 1
+				}
+			},
+			"lastPushTimeStamp": "2019-11-13T19:01:38.627Z"
+		}
 	}
 }

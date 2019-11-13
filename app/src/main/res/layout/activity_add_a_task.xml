@@ -61,17 +61,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/taskTitleHeading" />
 
-    <Spinner
-        android:id="@+id/spinnerAddTaskToTeam"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_constraintBottom_toTopOf="@+id/addTaskButton"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/taskTitleInput" />
-
-<!--    <RadioGroup xmlns:android="http://schemas.android.com/apk/res/android"-->
+    <!--    <RadioGroup xmlns:android="http://schemas.android.com/apk/res/android"-->
 <!--        android:id="@+id/radioTaskState"-->
 <!--        android:layout_width="wrap_content"-->
 <!--        android:layout_height="wrap_content"-->
@@ -98,13 +88,24 @@
 <!--            android:onClick="onRadioButtonClicked"/>-->
 <!--    </RadioGroup>-->
 
+    <Spinner
+        android:id="@+id/spinnerAddTaskToTeam"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toTopOf="@+id/addTaskButton"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/taskTitleInput" />
+
     <Button
-        android:id="@+id/button"
+        android:id="@+id/submitButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
+        android:layout_marginStart="32dp"
+        android:layout_marginBottom="16dp"
         android:text="@string/submit_file"
-        app:layout_constraintBottom_toTopOf="@+id/allTasksButton"
+        app:layout_constraintBottom_toTopOf="@+id/addTaskButton"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/attachButton"
         app:layout_constraintTop_toBottomOf="@+id/mainRecyclerView" />
@@ -113,11 +114,12 @@
         android:id="@+id/attachButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
+        android:layout_marginEnd="32dp"
+        android:layout_marginBottom="16dp"
         android:onClick="pickFile"
         android:text="Attach"
         app:layout_constraintBottom_toTopOf="@+id/addTaskButton"
-        app:layout_constraintEnd_toStartOf="@+id/button"
+        app:layout_constraintEnd_toStartOf="@+id/submitButton"
         app:layout_constraintHorizontal_bias="0.331"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/mainRecyclerView" />
@@ -126,6 +128,7 @@
         android:id="@+id/addTaskButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
         android:onClick="runAddTaskMutation"
         android:text="Add Task"
         app:layout_constraintBottom_toTopOf="@+id/totalTasksText"

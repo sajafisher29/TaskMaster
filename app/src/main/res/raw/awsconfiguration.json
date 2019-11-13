@@ -34,5 +34,16 @@
             "Bucket": "taskmastermedia-cf",
             "Region": "us-west-2"
         }
+    },
+    "PinpointAnalytics": {
+        "Default": {
+            "AppId": "89545c856866429abc0adfead263e5e4",
+            "Region": "us-west-2"
+        }
+    },
+    "PinpointTargeting": {
+        "Default": {
+            "Region": "us-west-2"
+        }
     }
 }
