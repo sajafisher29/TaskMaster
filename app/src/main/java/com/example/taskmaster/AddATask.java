@@ -4,8 +4,11 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -22,6 +25,7 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Spinner;
 import com.amazonaws.amplify.generated.graphql.CreateTaskMutation;
+import com.amazonaws.amplify.generated.graphql.ListTasksQuery;
 import com.amazonaws.amplify.generated.graphql.ListTeamsQuery;
 import com.amazonaws.mobile.client.AWSMobileClient;
 import com.amazonaws.mobile.config.AWSConfiguration;
@@ -34,8 +38,10 @@ import com.amazonaws.mobileconnectors.s3.transferutility.TransferState;
 import com.amazonaws.mobileconnectors.s3.transferutility.TransferUtility;
 import com.amazonaws.services.s3.AmazonS3Client;
 import com.apollographql.apollo.GraphQLCall;
+import com.apollographql.apollo.api.Response;
 import com.apollographql.apollo.exception.ApolloException;
 import java.io.File;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.UUID;
@@ -225,6 +231,78 @@ public class AddATask extends AppCompatActivity implements AdapterView.OnItemSel
         awsAppSyncClient.mutate(CreateTaskMutation.builder().input(createTaskInput).build())
                 .enqueue(addTaskCallBack);
 
+    }
+
+    private void save() {
+        // ... Other code ...
+
+        ClientFactory.appSyncClient().mutate(addTaskMutation).
+                refetchQueries(ListTasksQuery.builder().build()).
+                enqueue(mutateCallback);
+
+        // Enables offline support via an optimistic update
+        // Add to event list while offline or before request returns
+        addTaskOffline(input);
+    }
+
+    // https://aws.amazon.com/blogs/mobile/building-an-android-app-with-aws-amplify-part-2/
+    private void addTaskOffline(CreateTaskInput input) {
+
+        final CreateTaskMutation.CreateTask expected =
+                new CreateTaskMutation.CreateTask(
+                        "Task",
+                        UUID.randomUUID().toString(),
+                        input.name(),
+                        input.description(),
+                        TaskState.NEW,
+                        selectedTeam);
+
+
+        final AWSAppSyncClient awsAppSyncClient = ClientFactory.appSyncClient();
+        final ListTasksQuery listEventsQuery = ListTasksQuery.builder().build();
+
+
+        awsAppSyncClient.query(listEventsQuery)
+                .responseFetcher(AppSyncResponseFetchers.CACHE_ONLY)
+                .enqueue(new GraphQLCall.Callback<ListTasksQuery.Data>() {
+                    @Override
+                    public void onResponse(@Nonnull Response<ListTasksQuery.Data> response) {
+                        List<ListTasksQuery.Item> items = new ArrayList<>();
+                        if (response.data() != null) {
+                            items.addAll(response.data().listTasks().items());
+                        }
+
+                        items.add(new ListTasksQuery(
+                                expected.id(),
+                                expected.name(),
+                                expected.description()));
+                        ListTasksQuery.Data data = new ListTasksQuery.Data(new ListTasksQuery.ListTasks("ModelTaskConnection", items, null));
+                        awsAppSyncClient.getStore().write(listEventsQuery, data).enqueue(null);
+                        Log.d(TAG, "Successfully wrote item to local store while being offline.");
+
+                        finishIfOffline();
+                    }
+
+                    @Override
+                    public void onFailure(@Nonnull ApolloException e) {
+                        Log.e(TAG, "Failed to update event query list.", e);
+                    }
+                });
+    }
+
+    private void finishIfOffline(){
+        // Close the add activity when offline otherwise allow callback to close
+        ConnectivityManager cm =
+                (ConnectivityManager) getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
+
+        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+        boolean isConnected = activeNetwork != null &&
+                activeNetwork.isConnectedOrConnecting();
+
+        if (!isConnected) {
+            Log.d(TAG, "App is offline. Returning to MainActivity .");
+            finish();
+        }
     }
 
 //    public void addListenerOnButton() {

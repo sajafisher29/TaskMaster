@@ -1,8 +1,10 @@
 package com.example.taskmaster;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
+import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -16,6 +18,8 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.Spinner;
 import android.widget.TextView;
+
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -23,22 +27,26 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.amazonaws.amplify.generated.graphql.GetTeamQuery;
 import com.amazonaws.amplify.generated.graphql.ListTasksQuery;
 import com.amazonaws.amplify.generated.graphql.ListTeamsQuery;
+import com.amazonaws.amplify.generated.graphql.OnCreateTaskSubscription;
 import com.amazonaws.mobile.client.AWSMobileClient;
 import com.amazonaws.mobile.client.SignInUIOptions;
 import com.amazonaws.mobile.client.UserStateDetails;
 import com.amazonaws.mobile.config.AWSConfiguration;
 import com.amazonaws.mobileconnectors.appsync.AWSAppSyncClient;
+import com.amazonaws.mobileconnectors.appsync.AppSyncSubscriptionCall;
 import com.amazonaws.mobileconnectors.appsync.fetcher.AppSyncResponseFetchers;
-import com.amazonaws.mobileconnectors.s3.transferutility.TransferListener;
-import com.amazonaws.mobileconnectors.s3.transferutility.TransferObserver;
-import com.amazonaws.mobileconnectors.s3.transferutility.TransferService;
-import com.amazonaws.mobileconnectors.s3.transferutility.TransferState;
-import com.amazonaws.mobileconnectors.s3.transferutility.TransferUtility;
-import com.amazonaws.services.s3.AmazonS3Client;
+import com.amazonaws.mobileconnectors.pinpoint.PinpointConfiguration;
+import com.amazonaws.mobileconnectors.pinpoint.PinpointManager;
 import com.apollographql.apollo.GraphQLCall;
 import com.apollographql.apollo.api.Response;
 import com.apollographql.apollo.exception.ApolloException;
-import java.io.File;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.iid.InstanceIdResult;
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import javax.annotation.Nonnull;
@@ -55,6 +63,8 @@ public class MainActivity extends AppCompatActivity implements TaskAdapter.OnTas
     private RecyclerView.Adapter taskAdapter;
     List<ListTeamsQuery.Item> teamItems;  //originally teams
     ListTeamsQuery.Item selectedTeamItem; //originally selectedTeam
+    private FusedLocationProviderClient fusedLocationClient;
+    private static PinpointManager pinpointManager;
 
     // This gets called automatically when MainActivity is created/shown for the first time
     @Override
@@ -96,10 +106,15 @@ public class MainActivity extends AppCompatActivity implements TaskAdapter.OnTas
                 .awsConfiguration(new AWSConfiguration(getApplicationContext()))
                 .build();
 
+        // Initialize PinpointManager
+        getPinpointManager(getApplicationContext());
+
         this.tasks = new LinkedList<>();
         this.teamItems = new LinkedList<>();
 
         queryAllTeams();
+
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
 
         setContentView(R.layout.activity_main);
 
@@ -142,6 +157,59 @@ public class MainActivity extends AppCompatActivity implements TaskAdapter.OnTas
             }
         });
 
+        // Get Location button
+        Button locationButton = findViewById(R.id.locationButton);
+        // Add event listener
+        locationButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View event) {
+                fusedLocationClient.getLastLocation()
+                        .addOnSuccessListener(MainActivity.this, new OnSuccessListener<Location>() {
+                            @Override
+                            public void onSuccess(Location location) {
+                                // Got last known location. In some rare situations this can be null.
+                                if (location != null) {
+                                    Log.i(TAG, location.toString());
+                                }
+                            }
+                        });
+            }
+        });
+
+        // Subscribe to future updates
+        Log.i(TAG, "Building subscription");
+        OnCreateTaskSubscription subscription = OnCreateTaskSubscription.builder().build();
+        awsAppSyncClient.subscribe(subscription).execute(new AppSyncSubscriptionCall.Callback<OnCreateTaskSubscription.Data>() {
+            @Override
+            public void onResponse(@Nonnull com.apollographql.apollo.api.Response<OnCreateTaskSubscription.Data> response) {
+                // AWS calls this method when a new Task is created
+                Log.i(TAG, "New task added");
+                final Task newItem = new Task(response.data().onCreateTask().name(), response.data().onCreateTask().description());
+                Handler handler = new Handler(Looper.getMainLooper()) {
+                    @Override
+                    public void handleMessage(Message inputMessage) {
+                        tasks.add(newItem);
+                        taskAdapter.notifyDataSetChanged();
+                    }
+                };
+
+                handler.obtainMessage().sendToTarget();
+
+            }
+
+            @Override
+            public void onFailure(@Nonnull ApolloException error) {
+                Log.i(TAG, Arrays.toString(error.getStackTrace()));
+                Log.i(TAG, error.getCause().getMessage());
+            }
+
+            @Override
+            public void onCompleted() {
+                // Subscribed
+                Log.i(TAG, "Subscribed to task updates");
+            }
+        });
+
     }
 
     @Override
@@ -152,6 +220,9 @@ public class MainActivity extends AppCompatActivity implements TaskAdapter.OnTas
             TextView nameTextView = findViewById(R.id.greetingTextView);
             nameTextView.setText("Hello " + username + "!");
             Log.i(TAG, "fisher.signin" + username);
+
+
+            subscribe();
         }
     }
 
@@ -306,6 +377,88 @@ public class MainActivity extends AppCompatActivity implements TaskAdapter.OnTas
     @Override
     public void onNothingSelected(AdapterView<?> parent) {
 
+    }
+
+    public static PinpointManager getPinpointManager(final Context applicationContext) {
+        if (pinpointManager == null) {
+            final AWSConfiguration awsConfig = new AWSConfiguration(applicationContext);
+            AWSMobileClient.getInstance().initialize(applicationContext, awsConfig, new Callback<UserStateDetails>() {
+                @Override
+                public void onResult(UserStateDetails userStateDetails) {
+                    Log.i("INIT", userStateDetails.getUserState());
+                }
+
+                @Override
+                public void onError(Exception error) {
+                    Log.e("INIT", "Initialization error.", error);
+                }
+            });
+
+            PinpointConfiguration pinpointConfig = new PinpointConfiguration(
+                    applicationContext,
+                    AWSMobileClient.getInstance(),
+                    awsConfig);
+
+            pinpointManager = new PinpointManager(pinpointConfig);
+
+            FirebaseInstanceId.getInstance().getInstanceId()
+                    .addOnCompleteListener(new OnCompleteListener<InstanceIdResult>() {
+                        @Override
+                        public void onComplete(@NonNull Task<InstanceIdResult> task) {
+                            if (!task.isSuccessful()) {
+                                Log.w(TAG, "getInstanceId failed", task.getException());
+                                return;
+                            }
+                            final String token = task.getResult().getToken();
+                            Log.d(TAG, "Registering push notifications token: " + token);
+                            pinpointManager.getNotificationClient().registerDeviceToken(token);
+                        }
+                    });
+        }
+        return pinpointManager;
+    }
+
+    private AppSyncSubscriptionCall subscriptionWatcher;
+
+    private void subscribe(){
+        OnCreateTaskSubscription subscription = OnCreateTaskSubscription.builder().build();
+        subscriptionWatcher = ClientFactory.appSyncClient().subscribe(subscription);
+        subscriptionWatcher.execute(subCallback);
+    }
+
+    private AppSyncSubscriptionCall.Callback subCallback = new AppSyncSubscriptionCall.Callback() {
+        @Override
+        public void onResponse(@Nonnull Response response) {
+            Log.i("Response", "Received subscription notification: " + response.data().toString());
+
+            // Update UI with the newly added item
+            OnCreateTaskSubscription.OnCreateTask data = ((OnCreateTaskSubscription.Data)response.data()).onCreateTask();
+            final ListTasksQuery.Item addedItem = new ListTasksQuery.Item(data.__typename(), data.id(), data.name(), data.description(), data.taskState(), data.team());
+
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    mTasks.add(addedItem);
+                    mAdapter.notifyItemInserted(mPets.size() - 1);
+                }
+            });
+        }
+
+        @Override
+        public void onFailure(@Nonnull ApolloException e) {
+            Log.e("Error", e.toString());
+        }
+
+        @Override
+        public void onCompleted() {
+            Log.i("Completed", "Subscription completed");
+        }
+    };
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        subscriptionWatcher.cancel();
     }
 
 }

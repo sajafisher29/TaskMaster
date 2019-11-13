@@ -1,6 +1,7 @@
 package com.example.taskmaster;
 
 import androidx.room.Entity;
+import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 import androidx.room.TypeConverters;
 
@@ -11,11 +12,12 @@ public class Task {
     private long id;
     private String title;
     private String body;
-    private Team team;
+//    private Team team;
     private String fileKey;
 
     @TypeConverters(TaskStatusConverter.class)
     public TaskState taskState;
+
     public enum TaskState {
         NEW(0),
         ASSIGNED(1),
@@ -30,30 +32,32 @@ public class Task {
         }
     }
 
+    @Ignore
     public Task(String title, String body) {
         this.title = title;
         this.body = body;
     }
 
+    @Ignore
     public Task(String title, String body, int taskState) {
         this.title = title;
         this.body = body;
         this.taskState = getState();
     }
 
-    public Task(String title, String body, TaskState state, Team team, String fileKey) {
+
+    public Task(String title, String body, TaskState state, String fileKey) {
         this.title = title;
         this.body = body;
         this.taskState = state;
-        this.team = team;
         this.fileKey = fileKey;
     }
 
-    public Task(String title, String body, TaskState state, Team team) {
+    @Ignore
+    public Task(String title, String body, TaskState state) {
         this.title = title;
         this.body = body;
         this.taskState = state;
-        this.team = team;
         this.fileKey = null;
     }
 
@@ -89,6 +93,14 @@ public class Task {
 
     public void setState(TaskState state) {
         this.taskState = state;
+    }
+
+    public String getFileKey() {
+        return fileKey;
+    }
+
+    public void setFileKey(String fileKey) {
+        this.fileKey = fileKey;
     }
 
     @Override

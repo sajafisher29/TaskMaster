@@ -37,6 +37,13 @@
         "categories": {
             "auth": {
                 "taskmastercfa10f98": {}
+            },
+            "notifications": {
+                "Pinpoint": {
+                    "Name": "TaskMastere9ysa-cf",
+                    "Id": "89545c856866429abc0adfead263e5e4",
+                    "Region": "us-west-2"
+                }
             }
         }
     }
