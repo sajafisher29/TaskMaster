@@ -71,22 +71,22 @@
 		"apitaskwork": {
 			"Type": "AWS::CloudFormation::Stack",
 			"Properties": {
-				"TemplateURL": "https://s3.amazonaws.com/amplify-taskmaster-nichysarah-152647-deployment/amplify-cfn-templates/api/cloudformation-template.json",
+				"TemplateURL": "https://s3.amazonaws.com/amplify-taskmaster-sarahtwl-130247-deployment/amplify-cfn-templates/api/cloudformation-template.json",
 				"Parameters": {
 					"CreateAPIKey": 1,
 					"AppSyncApiName": "taskwork",
 					"DynamoDBBillingMode": "PAY_PER_REQUEST",
 					"DynamoDBEnableServerSideEncryption": "false",
-					"S3DeploymentBucket": "amplify-taskmaster-nichysarah-152647-deployment",
+					"S3DeploymentBucket": "amplify-taskmaster-sarahtwl-130247-deployment",
 					"S3DeploymentRootKey": "amplify-appsync-files/33526ceca39fa25f3cf791b1b2d832d2f082e151",
-					"env": "nichysarah"
+					"env": "sarahtwl"
 				}
 			}
 		},
 		"authtaskmastercfa10f98": {
 			"Type": "AWS::CloudFormation::Stack",
 			"Properties": {
-				"TemplateURL": "https://s3.amazonaws.com/amplify-taskmaster-nichysarah-152647-deployment/amplify-cfn-templates/auth/taskmastercfa10f98-cloudformation-template.yml",
+				"TemplateURL": "https://s3.amazonaws.com/amplify-taskmaster-sarahtwl-130247-deployment/amplify-cfn-templates/auth/taskmastercfa10f98-cloudformation-template.yml",
 				"Parameters": {
 					"identityPoolName": "taskmastercfa10f98_identitypool_cfa10f98",
 					"allowUnauthenticatedIdentities": true,
@@ -125,14 +125,14 @@
 					},
 					"useDefault": "default",
 					"dependsOn": "",
-					"env": "nichysarah"
+					"env": "sarahtwl"
 				}
 			}
 		},
 		"storagemedia": {
 			"Type": "AWS::CloudFormation::Stack",
 			"Properties": {
-				"TemplateURL": "https://s3.amazonaws.com/amplify-taskmaster-nichysarah-152647-deployment/amplify-cfn-templates/storage/s3-cloudformation-template.json",
+				"TemplateURL": "https://s3.amazonaws.com/amplify-taskmaster-sarahtwl-130247-deployment/amplify-cfn-templates/storage/s3-cloudformation-template.json",
 				"Parameters": {
 					"bucketName": "taskmastermedia",
 					"authPolicyName": "s3_amplify_06ef0719",
@@ -159,7 +159,35 @@
 					"s3PermissionsGuestUploads": "DISALLOW",
 					"GuestAllowList": "DISALLOW",
 					"triggerFunction": "NONE",
-					"env": "nichysarah"
+					"env": "sarahtwl"
+				}
+			}
+		},
+		"analyticsTaskMastere9ysa": {
+			"Type": "AWS::CloudFormation::Stack",
+			"Properties": {
+				"TemplateURL": "https://s3.amazonaws.com/amplify-taskmaster-sarahtwl-130247-deployment/amplify-cfn-templates/analytics/pinpoint-cloudformation-template.json",
+				"Parameters": {
+					"appName": "TaskMastere9ysa",
+					"roleName": "pinpointLambdaRolebec61478",
+					"cloudWatchPolicyName": "cloudWatchPolicybec61478",
+					"pinpointPolicyName": "pinpointPolicybec61478",
+					"authPolicyName": "pinpoint_amplify_bec61478",
+					"unauthPolicyName": "pinpoint_amplify_bec61478",
+					"authRoleName": {
+						"Ref": "AuthRoleName"
+					},
+					"unauthRoleName": {
+						"Ref": "UnauthRoleName"
+					},
+					"authRoleArn": {
+						"Fn::GetAtt": [
+							"AuthRole",
+							"Arn"
+						]
+					},
+					"appId": "1ab2d9c5611642ceb562989d950a771c",
+					"env": "sarahtwl"
 				}
 			}
 		},

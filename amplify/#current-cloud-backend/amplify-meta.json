@@ -1,19 +1,14 @@
 {
 	"providers": {
 		"awscloudformation": {
-			"AuthRoleName": "amplify-taskmaster-nichysarah-152647-authRole",
-			"UnauthRoleArn": "arn:aws:iam::743080406423:role/amplify-taskmaster-nichysarah-152647-unauthRole",
-			"AuthRoleArn": "arn:aws:iam::743080406423:role/amplify-taskmaster-nichysarah-152647-authRole",
+			"AuthRoleName": "amplify-taskmaster-sarahtwl-130247-authRole",
+			"UnauthRoleArn": "arn:aws:iam::862750062005:role/amplify-taskmaster-sarahtwl-130247-unauthRole",
+			"AuthRoleArn": "arn:aws:iam::862750062005:role/amplify-taskmaster-sarahtwl-130247-authRole",
 			"Region": "us-west-2",
-			"DeploymentBucketName": "amplify-taskmaster-nichysarah-152647-deployment",
-			"UnauthRoleName": "amplify-taskmaster-nichysarah-152647-unauthRole",
-			"StackName": "amplify-taskmaster-nichysarah-152647",
-			"StackId": "arn:aws:cloudformation:us-west-2:743080406423:stack/amplify-taskmaster-nichysarah-152647/101b54d0-066d-11ea-93bb-0a4249d37cb6"
-		},
-		"categories": {
-			"auth": {
-				"taskmastercfa10f98": {}
-			}
+			"DeploymentBucketName": "amplify-taskmaster-sarahtwl-130247-deployment",
+			"UnauthRoleName": "amplify-taskmaster-sarahtwl-130247-unauthRole",
+			"StackName": "amplify-taskmaster-sarahtwl-130247",
+			"StackId": "arn:aws:cloudformation:us-west-2:862750062005:stack/amplify-taskmaster-sarahtwl-130247/1cc95320-0722-11ea-85f1-021900937a08"
 		}
 	},
 	"api": {
@@ -31,16 +26,16 @@
 						}
 					}
 				},
-				"GraphQLAPIIdOutput": "eagnanfqtvfvrjrrfrgt4zqksm",
-				"GraphQLAPIEndpointOutput": "https://hsnmmidzhrfx5mllod6q6wqroq.appsync-api.us-west-2.amazonaws.com/graphql",
-				"GraphQLAPIKeyOutput": "da2-lehr25oe7fhr7ivzbe5edadawm"
+				"GraphQLAPIIdOutput": "fzqotxlrevfy3g4pp6nqkfrqb4",
+				"GraphQLAPIEndpointOutput": "https://sdmpsddwcfbejoji57yesiljzy.appsync-api.us-west-2.amazonaws.com/graphql",
+				"GraphQLAPIKeyOutput": "da2-hmg2ywcfl5ab7og5ncohvq5obu"
 			},
 			"providerMetadata": {
-				"s3TemplateURL": "https://s3.amazonaws.com/amplify-taskmaster-nichysarah-152647-deployment/amplify-cfn-templates/api/cloudformation-template.json",
+				"s3TemplateURL": "https://s3.amazonaws.com/amplify-taskmaster-sarahtwl-130247-deployment/amplify-cfn-templates/api/cloudformation-template.json",
 				"logicalId": "apitaskwork"
 			},
-			"lastPushTimeStamp": "2019-11-13T23:37:00.634Z",
-			"lastPushDirHash": "AwE4YVpHd4ouILDYCaVof2/TK8s="
+			"lastPushTimeStamp": "2019-11-14T21:08:12.103Z",
+			"lastPushDirHash": "QMUiEm335z2xziIhyLEQWelTmJY="
 		}
 	},
 	"auth": {
@@ -49,17 +44,17 @@
 			"providerPlugin": "awscloudformation",
 			"dependsOn": [],
 			"providerMetadata": {
-				"s3TemplateURL": "https://s3.amazonaws.com/amplify-taskmaster-nichysarah-152647-deployment/amplify-cfn-templates/auth/taskmastercfa10f98-cloudformation-template.yml",
+				"s3TemplateURL": "https://s3.amazonaws.com/amplify-taskmaster-sarahtwl-130247-deployment/amplify-cfn-templates/auth/taskmastercfa10f98-cloudformation-template.yml",
 				"logicalId": "authtaskmastercfa10f98"
 			},
-			"lastPushTimeStamp": "2019-11-13T23:37:00.634Z",
+			"lastPushTimeStamp": "2019-11-14T21:08:12.103Z",
 			"output": {
-				"AppClientSecret": "11mqikk89bnblc6fg1rnkf7nhrb669gj6nb8q26rpu3lko69peo4",
-				"UserPoolId": "us-west-2_WmT6VG8W0",
-				"AppClientIDWeb": "dioqhmll13e62tc3uu4s7dnlu",
-				"AppClientID": "6dagnplj09npnnjm5sanp4tlu6",
-				"IdentityPoolId": "us-west-2:8deee079-7287-451c-b3f2-549129d84125",
-				"IdentityPoolName": "taskmastercfa10f98_identitypool_cfa10f98__nichysarah",
+				"AppClientSecret": "1b3drgaskv35tn3anb6q1itge9q0ajfjn90i4ube5i5c57ibe0lp",
+				"UserPoolId": "us-west-2_cuce1D9fu",
+				"AppClientIDWeb": "29ipjlql8i5ubhvvh6e5pvlm81",
+				"AppClientID": "61k4vohs4l460bg41b1edmuup9",
+				"IdentityPoolId": "us-west-2:306383f6-3a8f-47ae-9b0d-f1cd0bcd80a3",
+				"IdentityPoolName": "taskmastercfa10f98_identitypool_cfa10f98__sarahtwl",
 				"UserPoolName": "taskmastercfa10f98_userpool_cfa10f98"
 			},
 			"lastPushDirHash": "V3m2T422QiuL7NIFcFleq0yBt8w="
@@ -70,12 +65,12 @@
 			"service": "S3",
 			"providerPlugin": "awscloudformation",
 			"providerMetadata": {
-				"s3TemplateURL": "https://s3.amazonaws.com/amplify-taskmaster-nichysarah-152647-deployment/amplify-cfn-templates/storage/s3-cloudformation-template.json",
+				"s3TemplateURL": "https://s3.amazonaws.com/amplify-taskmaster-sarahtwl-130247-deployment/amplify-cfn-templates/storage/s3-cloudformation-template.json",
 				"logicalId": "storagemedia"
 			},
-			"lastPushTimeStamp": "2019-11-13T23:37:00.634Z",
+			"lastPushTimeStamp": "2019-11-14T21:08:12.103Z",
 			"output": {
-				"BucketName": "taskmastermedia-nichysarah",
+				"BucketName": "taskmastermedia-sarahtwl",
 				"Region": "us-west-2"
 			},
 			"lastPushDirHash": "evEkuY/b9zErBDBC7orNMkyGGRQ="
@@ -85,22 +80,39 @@
 		"TaskMastere9ysa": {
 			"service": "Pinpoint",
 			"output": {
-				"Name": "TaskMastere9ysa-nichysarah",
-				"Id": "1ab2d9c5611642ceb562989d950a771c",
+				"Name": "TaskMastere9ysa-sarahtwl",
+				"Id": "2b45559bdbbd4ec38901045f7d6d3cfc",
 				"Region": "us-west-2",
 				"FCM": {
-					"ApplicationId": "1ab2d9c5611642ceb562989d950a771c",
-					"CreationDate": "2019-11-13T23:34:12.389Z",
+					"ApplicationId": "2b45559bdbbd4ec38901045f7d6d3cfc",
+					"CreationDate": "2019-11-14T21:04:31.158Z",
 					"Enabled": true,
 					"HasCredential": true,
 					"Id": "gcm",
 					"IsArchived": false,
-					"LastModifiedDate": "2019-11-13T23:34:12.389Z",
+					"LastModifiedDate": "2019-11-14T21:04:31.158Z",
 					"Platform": "GCM",
 					"Version": 1
 				}
 			},
-			"lastPushTimeStamp": "2019-11-13T23:32:08.373Z"
+			"lastPushTimeStamp": "2019-11-14T21:03:20.242Z"
+		}
+	},
+	"analytics": {
+		"TaskMastere9ysa": {
+			"service": "Pinpoint",
+			"providerPlugin": "awscloudformation",
+			"providerMetadata": {
+				"s3TemplateURL": "https://s3.amazonaws.com/amplify-taskmaster-sarahtwl-130247-deployment/amplify-cfn-templates/analytics/pinpoint-cloudformation-template.json",
+				"logicalId": "analyticsTaskMastere9ysa"
+			},
+			"lastPushTimeStamp": "2019-11-14T21:08:12.103Z",
+			"output": {
+				"appName": "TaskMastere9ysa",
+				"Region": "us-west-2",
+				"Id": "1ab2d9c5611642ceb562989d950a771c"
+			},
+			"lastPushDirHash": "uMPw+BOdN1nzPoVwaL0IpykN7DY="
 		}
 	}
 }
