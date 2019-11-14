@@ -46,5 +46,29 @@
                 }
             }
         }
+    },
+    "nichysarah": {
+        "awscloudformation": {
+            "AuthRoleName": "amplify-taskmaster-nichysarah-152647-authRole",
+            "UnauthRoleArn": "arn:aws:iam::743080406423:role/amplify-taskmaster-nichysarah-152647-unauthRole",
+            "AuthRoleArn": "arn:aws:iam::743080406423:role/amplify-taskmaster-nichysarah-152647-authRole",
+            "Region": "us-west-2",
+            "DeploymentBucketName": "amplify-taskmaster-nichysarah-152647-deployment",
+            "UnauthRoleName": "amplify-taskmaster-nichysarah-152647-unauthRole",
+            "StackName": "amplify-taskmaster-nichysarah-152647",
+            "StackId": "arn:aws:cloudformation:us-west-2:743080406423:stack/amplify-taskmaster-nichysarah-152647/101b54d0-066d-11ea-93bb-0a4249d37cb6"
+        },
+        "categories": {
+            "auth": {
+                "taskmastercfa10f98": {}
+            },
+            "notifications": {
+                "Pinpoint": {
+                    "Name": "TaskMastere9ysa-nichysarah",
+                    "Id": "1ab2d9c5611642ceb562989d950a771c",
+                    "Region": "us-west-2"
+                }
+            }
+        }
     }
 }
