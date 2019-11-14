@@ -55,10 +55,7 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import javax.annotation.Nonnull;
-
-import okhttp3.Call;
 import okhttp3.Callback;
-
 import static android.Manifest.permission.ACCESS_BACKGROUND_LOCATION;
 import static android.Manifest.permission.ACCESS_COARSE_LOCATION;
 import static android.Manifest.permission.ACCESS_FINE_LOCATION;
@@ -84,6 +81,7 @@ public class MainActivity extends AppCompatActivity implements TaskAdapter.OnTas
         setContentView(R.layout.activity_main);
 
         String[] permissions = {READ_EXTERNAL_STORAGE, ACCESS_COARSE_LOCATION, ACCESS_FINE_LOCATION, ACCESS_BACKGROUND_LOCATION};
+        ActivityCompat.requestPermissions(this, permissions, 1);
 
         // Initialize AWS' Mobile Client to check on log in/out status
         AWSMobileClient.getInstance().initialize(getApplicationContext(), new com.amazonaws.mobile.client.Callback<UserStateDetails>() {
@@ -408,8 +406,8 @@ public class MainActivity extends AppCompatActivity implements TaskAdapter.OnTas
                 }
 
                 @Override
-                public void onError(Exception error) {
-                    Log.e("INIT", "Initialization error.", error);
+                public void onError(Exception e) {
+
                 }
             });
 
@@ -432,6 +430,7 @@ public class MainActivity extends AppCompatActivity implements TaskAdapter.OnTas
                             Log.d(TAG, "Registering push notifications token: " + token);
                             pinpointManager.getNotificationClient().registerDeviceToken(token);
                         }
+
                     });
         }
         return pinpointManager;
@@ -453,11 +452,8 @@ public class MainActivity extends AppCompatActivity implements TaskAdapter.OnTas
             // Update UI with the newly added item
             OnCreateTaskSubscription.OnCreateTask data = ((OnCreateTaskSubscription.Data)response.data()).onCreateTask();
 
-
             // Team needs to be a new team
             final Task newTask = new Task(data.name(), data.description(), new Team(data.team().name()));
-
-            // NOTES: you are accessing variables that do not exist here
 
             runOnUiThread(new Runnable() {
                 @Override
@@ -482,7 +478,7 @@ public class MainActivity extends AppCompatActivity implements TaskAdapter.OnTas
     @Override
     protected void onStop() {
         super.onStop();
-        subscriptionWatcher.cancel();
+//        subscriptionWatcher.cancel();
     }
 
 }

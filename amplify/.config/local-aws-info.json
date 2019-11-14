@@ -13,5 +13,10 @@
         "configLevel": "project",
         "useProfile": true,
         "profileName": "sajafisher"
+    },
+    "nichysarah": {
+        "configLevel": "project",
+        "useProfile": true,
+        "profileName": "ncarignan"
     }
 }
