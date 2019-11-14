@@ -70,5 +70,29 @@
                 }
             }
         }
+    },
+    "sarahtwl": {
+        "awscloudformation": {
+            "AuthRoleName": "amplify-taskmaster-sarahtwl-130247-authRole",
+            "UnauthRoleArn": "arn:aws:iam::862750062005:role/amplify-taskmaster-sarahtwl-130247-unauthRole",
+            "AuthRoleArn": "arn:aws:iam::862750062005:role/amplify-taskmaster-sarahtwl-130247-authRole",
+            "Region": "us-west-2",
+            "DeploymentBucketName": "amplify-taskmaster-sarahtwl-130247-deployment",
+            "UnauthRoleName": "amplify-taskmaster-sarahtwl-130247-unauthRole",
+            "StackName": "amplify-taskmaster-sarahtwl-130247",
+            "StackId": "arn:aws:cloudformation:us-west-2:862750062005:stack/amplify-taskmaster-sarahtwl-130247/1cc95320-0722-11ea-85f1-021900937a08"
+        },
+        "categories": {
+            "auth": {
+                "taskmastercfa10f98": {}
+            },
+            "notifications": {
+                "Pinpoint": {
+                    "Name": "TaskMastere9ysa-sarahtwl",
+                    "Id": "2b45559bdbbd4ec38901045f7d6d3cfc",
+                    "Region": "us-west-2"
+                }
+            }
+        }
     }
 }

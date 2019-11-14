@@ -6,38 +6,38 @@
     },
     "AppSync": {
         "Default": {
-            "ApiUrl": "https://64moic5ypvhqtde4cv7snseppm.appsync-api.us-west-2.amazonaws.com/graphql",
+            "ApiUrl": "https://sdmpsddwcfbejoji57yesiljzy.appsync-api.us-west-2.amazonaws.com/graphql",
             "Region": "us-west-2",
             "AuthMode": "API_KEY",
-            "ApiKey": "da2-eikw4f7kxreidluprrz5sbvqy4",
+            "ApiKey": "da2-hmg2ywcfl5ab7og5ncohvq5obu",
             "ClientDatabasePrefix": "taskwork_API_KEY"
         }
     },
     "CredentialsProvider": {
         "CognitoIdentity": {
             "Default": {
-                "PoolId": "us-west-2:16544685-a0a6-4126-a31c-90c8fc15c72e",
+                "PoolId": "us-west-2:306383f6-3a8f-47ae-9b0d-f1cd0bcd80a3",
                 "Region": "us-west-2"
             }
         }
     },
     "CognitoUserPool": {
         "Default": {
-            "PoolId": "us-west-2_4KnIYWMPP",
-            "AppClientId": "2tlip750t2e4qublh648b3pmp",
-            "AppClientSecret": "4aeqa6jaoah59oroothqkfg9p2vqo39onb7gbpjatejms8cno09",
+            "PoolId": "us-west-2_cuce1D9fu",
+            "AppClientId": "61k4vohs4l460bg41b1edmuup9",
+            "AppClientSecret": "1b3drgaskv35tn3anb6q1itge9q0ajfjn90i4ube5i5c57ibe0lp",
             "Region": "us-west-2"
         }
     },
     "S3TransferUtility": {
         "Default": {
-            "Bucket": "taskmastermedia-cf",
+            "Bucket": "taskmastermedia-sarahtwl",
             "Region": "us-west-2"
         }
     },
     "PinpointAnalytics": {
         "Default": {
-            "AppId": "1ab2d9c5611642ceb562989d950a771c",
+            "AppId": "2b45559bdbbd4ec38901045f7d6d3cfc",
             "Region": "us-west-2"
         }
     },

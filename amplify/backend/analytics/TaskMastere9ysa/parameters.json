@@ -1,0 +1,21 @@
+{
+    "appName": "TaskMastere9ysa",
+    "roleName": "pinpointLambdaRolebec61478",
+    "cloudWatchPolicyName": "cloudWatchPolicybec61478",
+    "pinpointPolicyName": "pinpointPolicybec61478",
+    "authPolicyName": "pinpoint_amplify_bec61478",
+    "unauthPolicyName": "pinpoint_amplify_bec61478",
+    "authRoleName": {
+        "Ref": "AuthRoleName"
+    },
+    "unauthRoleName": {
+        "Ref": "UnauthRoleName"
+    },
+    "authRoleArn": {
+        "Fn::GetAtt": [
+            "AuthRole",
+            "Arn"
+        ]
+    },
+    "appId": "1ab2d9c5611642ceb562989d950a771c"
+}
