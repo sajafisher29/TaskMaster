@@ -18,6 +18,8 @@ public class Team {
         this.name = teamItem.name();
     }
 
+    public Team(){}
+
     public String getId() {
         return id;
     }

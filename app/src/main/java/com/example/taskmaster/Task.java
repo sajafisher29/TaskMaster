@@ -14,6 +14,7 @@ public class Task {
     private long id;
     private String title;
     private String body;
+    @Ignore
     private Team team;
     private String fileKey;
 
