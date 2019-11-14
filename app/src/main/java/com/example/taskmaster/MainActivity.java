@@ -43,14 +43,22 @@ import com.apollographql.apollo.exception.ApolloException;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.iid.InstanceIdResult;
+
+import org.jetbrains.annotations.NotNull;
+
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import javax.annotation.Nonnull;
 import okhttp3.Callback;
+import static android.Manifest.permission.ACCESS_BACKGROUND_LOCATION;
+import static android.Manifest.permission.ACCESS_COARSE_LOCATION;
+import static android.Manifest.permission.ACCESS_FINE_LOCATION;
 import static android.Manifest.permission.READ_EXTERNAL_STORAGE;
 
 public class MainActivity extends AppCompatActivity implements TaskAdapter.OnTaskInteractionListener, AdapterView.OnItemSelectedListener {
@@ -71,6 +79,9 @@ public class MainActivity extends AppCompatActivity implements TaskAdapter.OnTas
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        String[] permissions = {READ_EXTERNAL_STORAGE, ACCESS_COARSE_LOCATION, ACCESS_FINE_LOCATION, ACCESS_BACKGROUND_LOCATION};
+        ActivityCompat.requestPermissions(this, permissions, 1);
 
         // Initialize AWS' Mobile Client to check on log in/out status
         AWSMobileClient.getInstance().initialize(getApplicationContext(), new com.amazonaws.mobile.client.Callback<UserStateDetails>() {
@@ -164,6 +175,12 @@ public class MainActivity extends AppCompatActivity implements TaskAdapter.OnTas
             @Override
             public void onClick(View event) {
                 fusedLocationClient.getLastLocation()
+                        .addOnFailureListener(MainActivity.this, new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception error) {
+                                Log.e(TAG, error.getMessage());
+                            }
+                        })
                         .addOnSuccessListener(MainActivity.this, new OnSuccessListener<Location>() {
                             @Override
                             public void onSuccess(Location location) {
@@ -184,7 +201,7 @@ public class MainActivity extends AppCompatActivity implements TaskAdapter.OnTas
             public void onResponse(@Nonnull com.apollographql.apollo.api.Response<OnCreateTaskSubscription.Data> response) {
                 // AWS calls this method when a new Task is created
                 Log.i(TAG, "New task added");
-                final Task newItem = new Task(response.data().onCreateTask().name(), response.data().onCreateTask().description());
+                final Task newItem = new Task(response.data().onCreateTask().name(), response.data().onCreateTask().description(), new Team(response.data().onCreateTask().team().name()));
                 Handler handler = new Handler(Looper.getMainLooper()) {
                     @Override
                     public void handleMessage(Message inputMessage) {
@@ -266,7 +283,7 @@ public class MainActivity extends AppCompatActivity implements TaskAdapter.OnTas
                     List<ListTasksQuery.Item> items = response.data().listTasks().items();
                     tasks.clear();
                     for (ListTasksQuery.Item item : items) {
-                        tasks.add(new Task(item.name(), item.description()));
+                        tasks.add(new Task(item.name(), item.description(), new Team(item.team().name())));
                     }
                     recyclerView.getAdapter().notifyDataSetChanged();
                 }
@@ -290,7 +307,7 @@ public class MainActivity extends AppCompatActivity implements TaskAdapter.OnTas
                     List<GetTeamQuery.Item> selectedTeamTasksList = response.data().getTeam().tasks().items();
                     tasks.clear();
                     for (GetTeamQuery.Item item : selectedTeamTasksList) {
-                        tasks.add(new Task(item.name(), item.description()));
+                        tasks.add(new Task(item.name(), item.description(), new Team(response.data().getTeam().name())));
                     }
                     recyclerView.getAdapter().notifyDataSetChanged();
                 }
@@ -382,15 +399,15 @@ public class MainActivity extends AppCompatActivity implements TaskAdapter.OnTas
     public static PinpointManager getPinpointManager(final Context applicationContext) {
         if (pinpointManager == null) {
             final AWSConfiguration awsConfig = new AWSConfiguration(applicationContext);
-            AWSMobileClient.getInstance().initialize(applicationContext, awsConfig, new Callback<UserStateDetails>() {
+            AWSMobileClient.getInstance().initialize(applicationContext, awsConfig, new com.amazonaws.mobile.client.Callback<UserStateDetails>() {
                 @Override
-                public void onResult(UserStateDetails userStateDetails) {
-                    Log.i("INIT", userStateDetails.getUserState());
+                public void onResult(UserStateDetails result) {
+                    Log.i("INIT", result.getUserState().toString());
                 }
 
                 @Override
-                public void onError(Exception error) {
-                    Log.e("INIT", "Initialization error.", error);
+                public void onError(Exception e) {
+
                 }
             });
 
@@ -404,7 +421,7 @@ public class MainActivity extends AppCompatActivity implements TaskAdapter.OnTas
             FirebaseInstanceId.getInstance().getInstanceId()
                     .addOnCompleteListener(new OnCompleteListener<InstanceIdResult>() {
                         @Override
-                        public void onComplete(@NonNull Task<InstanceIdResult> task) {
+                        public void onComplete(@NonNull com.google.android.gms.tasks.Task<InstanceIdResult> task) {
                             if (!task.isSuccessful()) {
                                 Log.w(TAG, "getInstanceId failed", task.getException());
                                 return;
@@ -413,6 +430,7 @@ public class MainActivity extends AppCompatActivity implements TaskAdapter.OnTas
                             Log.d(TAG, "Registering push notifications token: " + token);
                             pinpointManager.getNotificationClient().registerDeviceToken(token);
                         }
+
                     });
         }
         return pinpointManager;
@@ -422,7 +440,7 @@ public class MainActivity extends AppCompatActivity implements TaskAdapter.OnTas
 
     private void subscribe(){
         OnCreateTaskSubscription subscription = OnCreateTaskSubscription.builder().build();
-        subscriptionWatcher = ClientFactory.appSyncClient().subscribe(subscription);
+        subscriptionWatcher = awsAppSyncClient.subscribe(subscription);
         subscriptionWatcher.execute(subCallback);
     }
 
@@ -433,13 +451,15 @@ public class MainActivity extends AppCompatActivity implements TaskAdapter.OnTas
 
             // Update UI with the newly added item
             OnCreateTaskSubscription.OnCreateTask data = ((OnCreateTaskSubscription.Data)response.data()).onCreateTask();
-            final ListTasksQuery.Item addedItem = new ListTasksQuery.Item(data.__typename(), data.id(), data.name(), data.description(), data.taskState(), data.team());
+
+            // Team needs to be a new team
+            final Task newTask = new Task(data.name(), data.description(), new Team(data.team().name()));
 
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    mTasks.add(addedItem);
-                    mAdapter.notifyItemInserted(mPets.size() - 1);
+                    tasks.add(newTask);
+                    taskAdapter.notifyItemInserted(tasks.size() - 1);
                 }
             });
         }
@@ -458,7 +478,7 @@ public class MainActivity extends AppCompatActivity implements TaskAdapter.OnTas
     @Override
     protected void onStop() {
         super.onStop();
-        subscriptionWatcher.cancel();
+//        subscriptionWatcher.cancel();
     }
 
 }

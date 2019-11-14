@@ -1,14 +1,19 @@
 {
 	"providers": {
 		"awscloudformation": {
-			"AuthRoleName": "amplify-taskmaster-cf-110539-authRole",
-			"UnauthRoleArn": "arn:aws:iam::862750062005:role/amplify-taskmaster-cf-110539-unauthRole",
-			"AuthRoleArn": "arn:aws:iam::862750062005:role/amplify-taskmaster-cf-110539-authRole",
+			"AuthRoleName": "amplify-taskmaster-nichysarah-152647-authRole",
+			"UnauthRoleArn": "arn:aws:iam::743080406423:role/amplify-taskmaster-nichysarah-152647-unauthRole",
+			"AuthRoleArn": "arn:aws:iam::743080406423:role/amplify-taskmaster-nichysarah-152647-authRole",
 			"Region": "us-west-2",
-			"DeploymentBucketName": "amplify-taskmaster-cf-110539-deployment",
-			"UnauthRoleName": "amplify-taskmaster-cf-110539-unauthRole",
-			"StackName": "amplify-taskmaster-cf-110539",
-			"StackId": "arn:aws:cloudformation:us-west-2:862750062005:stack/amplify-taskmaster-cf-110539/3552a090-fcd2-11e9-a1eb-06701ab4dd6c"
+			"DeploymentBucketName": "amplify-taskmaster-nichysarah-152647-deployment",
+			"UnauthRoleName": "amplify-taskmaster-nichysarah-152647-unauthRole",
+			"StackName": "amplify-taskmaster-nichysarah-152647",
+			"StackId": "arn:aws:cloudformation:us-west-2:743080406423:stack/amplify-taskmaster-nichysarah-152647/101b54d0-066d-11ea-93bb-0a4249d37cb6"
+		},
+		"categories": {
+			"auth": {
+				"taskmastercfa10f98": {}
+			}
 		}
 	},
 	"api": {
@@ -26,16 +31,16 @@
 						}
 					}
 				},
-				"GraphQLAPIIdOutput": "k6th6spkbvaudaorc46k3fk5jq",
-				"GraphQLAPIEndpointOutput": "https://64moic5ypvhqtde4cv7snseppm.appsync-api.us-west-2.amazonaws.com/graphql",
-				"GraphQLAPIKeyOutput": "da2-eikw4f7kxreidluprrz5sbvqy4"
+				"GraphQLAPIIdOutput": "eagnanfqtvfvrjrrfrgt4zqksm",
+				"GraphQLAPIEndpointOutput": "https://hsnmmidzhrfx5mllod6q6wqroq.appsync-api.us-west-2.amazonaws.com/graphql",
+				"GraphQLAPIKeyOutput": "da2-lehr25oe7fhr7ivzbe5edadawm"
 			},
 			"providerMetadata": {
-				"s3TemplateURL": "https://s3.amazonaws.com/amplify-taskmaster-cf-110539-deployment/amplify-cfn-templates/api/cloudformation-template.json",
+				"s3TemplateURL": "https://s3.amazonaws.com/amplify-taskmaster-nichysarah-152647-deployment/amplify-cfn-templates/api/cloudformation-template.json",
 				"logicalId": "apitaskwork"
 			},
-			"lastPushTimeStamp": "2019-11-06T23:16:53.657Z",
-			"lastPushDirHash": "TB4g7jfzfWwi+am7Our6Lbp1Tfg="
+			"lastPushTimeStamp": "2019-11-13T23:37:00.634Z",
+			"lastPushDirHash": "AwE4YVpHd4ouILDYCaVof2/TK8s="
 		}
 	},
 	"auth": {
@@ -44,20 +49,20 @@
 			"providerPlugin": "awscloudformation",
 			"dependsOn": [],
 			"providerMetadata": {
-				"s3TemplateURL": "https://s3.amazonaws.com/amplify-taskmaster-cf-110539-deployment/amplify-cfn-templates/auth/taskmastercfa10f98-cloudformation-template.yml",
+				"s3TemplateURL": "https://s3.amazonaws.com/amplify-taskmaster-nichysarah-152647-deployment/amplify-cfn-templates/auth/taskmastercfa10f98-cloudformation-template.yml",
 				"logicalId": "authtaskmastercfa10f98"
 			},
-			"lastPushTimeStamp": "2019-11-06T23:16:53.659Z",
+			"lastPushTimeStamp": "2019-11-13T23:37:00.634Z",
 			"output": {
-				"AppClientSecret": "4aeqa6jaoah59oroothqkfg9p2vqo39onb7gbpjatejms8cno09",
-				"UserPoolId": "us-west-2_4KnIYWMPP",
-				"AppClientIDWeb": "1i021kaa9gohlacbre9eg0lmt6",
-				"AppClientID": "2tlip750t2e4qublh648b3pmp",
-				"IdentityPoolId": "us-west-2:16544685-a0a6-4126-a31c-90c8fc15c72e",
-				"IdentityPoolName": "taskmastercfa10f98_identitypool_cfa10f98__cf",
+				"AppClientSecret": "11mqikk89bnblc6fg1rnkf7nhrb669gj6nb8q26rpu3lko69peo4",
+				"UserPoolId": "us-west-2_WmT6VG8W0",
+				"AppClientIDWeb": "dioqhmll13e62tc3uu4s7dnlu",
+				"AppClientID": "6dagnplj09npnnjm5sanp4tlu6",
+				"IdentityPoolId": "us-west-2:8deee079-7287-451c-b3f2-549129d84125",
+				"IdentityPoolName": "taskmastercfa10f98_identitypool_cfa10f98__nichysarah",
 				"UserPoolName": "taskmastercfa10f98_userpool_cfa10f98"
 			},
-			"lastPushDirHash": "S8wkNwDmlc5LUoU8tz/4pu5vOqc="
+			"lastPushDirHash": "V3m2T422QiuL7NIFcFleq0yBt8w="
 		}
 	},
 	"storage": {
@@ -65,12 +70,12 @@
 			"service": "S3",
 			"providerPlugin": "awscloudformation",
 			"providerMetadata": {
-				"s3TemplateURL": "https://s3.amazonaws.com/amplify-taskmaster-cf-110539-deployment/amplify-cfn-templates/storage/s3-cloudformation-template.json",
+				"s3TemplateURL": "https://s3.amazonaws.com/amplify-taskmaster-nichysarah-152647-deployment/amplify-cfn-templates/storage/s3-cloudformation-template.json",
 				"logicalId": "storagemedia"
 			},
-			"lastPushTimeStamp": "2019-11-06T23:16:53.662Z",
+			"lastPushTimeStamp": "2019-11-13T23:37:00.634Z",
 			"output": {
-				"BucketName": "taskmastermedia-cf",
+				"BucketName": "taskmastermedia-nichysarah",
 				"Region": "us-west-2"
 			},
 			"lastPushDirHash": "evEkuY/b9zErBDBC7orNMkyGGRQ="
@@ -80,22 +85,22 @@
 		"TaskMastere9ysa": {
 			"service": "Pinpoint",
 			"output": {
-				"Name": "TaskMastere9ysa-cf",
-				"Id": "89545c856866429abc0adfead263e5e4",
+				"Name": "TaskMastere9ysa-nichysarah",
+				"Id": "1ab2d9c5611642ceb562989d950a771c",
 				"Region": "us-west-2",
 				"FCM": {
-					"ApplicationId": "89545c856866429abc0adfead263e5e4",
-					"CreationDate": "2019-11-13T19:01:55.850Z",
+					"ApplicationId": "1ab2d9c5611642ceb562989d950a771c",
+					"CreationDate": "2019-11-13T23:34:12.389Z",
 					"Enabled": true,
 					"HasCredential": true,
 					"Id": "gcm",
 					"IsArchived": false,
-					"LastModifiedDate": "2019-11-13T19:01:55.850Z",
+					"LastModifiedDate": "2019-11-13T23:34:12.389Z",
 					"Platform": "GCM",
 					"Version": 1
 				}
 			},
-			"lastPushTimeStamp": "2019-11-13T19:01:38.627Z"
+			"lastPushTimeStamp": "2019-11-13T23:32:08.373Z"
 		}
 	}
 }

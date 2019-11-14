@@ -5,6 +5,8 @@ import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 import androidx.room.TypeConverters;
 
+import java.util.stream.Stream;
+
 @Entity
 public class Task {
 
@@ -12,7 +14,8 @@ public class Task {
     private long id;
     private String title;
     private String body;
-//    private Team team;
+    @Ignore
+    private Team team;
     private String fileKey;
 
     @TypeConverters(TaskStatusConverter.class)
@@ -33,9 +36,10 @@ public class Task {
     }
 
     @Ignore
-    public Task(String title, String body) {
+    public Task(String title, String body, Team team) {
         this.title = title;
         this.body = body;
+        this.team = team;
     }
 
     @Ignore
@@ -44,7 +48,6 @@ public class Task {
         this.body = body;
         this.taskState = getState();
     }
-
 
     public Task(String title, String body, TaskState state, String fileKey) {
         this.title = title;

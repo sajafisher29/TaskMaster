@@ -9,10 +9,16 @@ public class Team {
     private String id;
     private String name;
 
+    public Team (String name) {
+        this.name = name;
+    }
+
     public Team(ListTeamsQuery.Item teamItem) {
         this.id = teamItem.id();
         this.name = teamItem.name();
     }
+
+    public Team(){}
 
     public String getId() {
         return id;
